@@ -11,10 +11,10 @@
 # | Deyan Ginev <d.ginev@jacobs-university.de>                  #_#     | #
 # | http://kwarc.info/people/dginev                            (o o)    | #
 # \=========================================================ooo==U==ooo=/ #
-package CorTeX::Blueprint::tex_to_tei_xhtml_v0_1;
+package CorTeX::Service::tex_to_tei_xhtml_v0_1;
 use warnings;
 use strict;
-use base qw(CorTeX::Blueprint);
+use base qw(CorTeX::Service);
 use LaTeXML::Converter;
 use LaTeXML::Util::Config;
 use LLaMaPUn::LaTeXML;

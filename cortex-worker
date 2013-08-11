@@ -32,16 +32,13 @@ BEGIN {
 if (-d $libdir) {
   use lib $libdir;}
 
-use CorTeX::Util::DB_File_Utils qw(db_file_connect db_file_disconnect);
-use CorTeX::Util::Data qw(parse_log);
-
 my ($s,@servers) = @ARGV;
 
 my $worker = gearman_worker(@servers);
 my $service;
-my $eval_return = eval {require "CorTeX/Blueprint/$s.pm"; 1; };
+my $eval_return = eval {require "CorTeX/Service/$s.pm"; 1; };
 if ($eval_return && (!$@)) {
-  $service = eval { "CorTeX::Blueprint::$s"->new(); }; }
+  $service = eval { "CorTeX::Service::$s"->new(); }; }
 else {
   print STDERR "Service $s not available, exiting.\n$@\n";
   exit; }          

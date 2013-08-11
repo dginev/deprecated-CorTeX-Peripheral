@@ -1,0 +1,12 @@
+=== CorTeX Peripheral installation instructions ===
+
+For now, assuming you're running a Debian-based OS
+
+0. Debian packages
+sudo apt-get install \
+  gearman mod-gearman-tools \
+  libgearman-client-perl \
+  gearman-server libgearman-client-async-perl \
+  libanyevent-perl
+
+sudo cpanm AnyEvent::Gearman Unix::Processors

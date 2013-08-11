@@ -11,11 +11,11 @@
 # | Deyan Ginev <d.ginev@jacobs-university.de>                  #_#     | #
 # | http://kwarc.info/people/dginev                            (o o)    | #
 # \=========================================================ooo==U==ooo=/ #
-package CorTeX::Blueprint::mock_spotter_v0_1;
+package CorTeX::Service::mock_spotter_v0_1;
 use warnings;
 use strict;
 use Data::Dumper;
-use base qw(CorTeX::Blueprint);
+use base qw(CorTeX::Service);
 
 sub type {'analysis'}
 

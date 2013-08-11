@@ -1,6 +1,6 @@
 # /=====================================================================\ #
 # |  CorTeX Framework                                                   | #
-# | Initial Preprocessing from ZBL Tex to HTML5                         | #
+# | Service template for CorTeX servies                               | #
 # |=====================================================================| #
 # | Part of the LaMaPUn project: https://trac.kwarc.info/lamapun/       | #
 # |  Research software, produced as part of work done by:               | #
@@ -11,32 +11,38 @@
 # | Deyan Ginev <d.ginev@jacobs-university.de>                  #_#     | #
 # | http://kwarc.info/people/dginev                            (o o)    | #
 # \=========================================================ooo==U==ooo=/ #
-package CorTeX::Blueprint::zbl_to_html_v0_1;
-use warnings;
-use strict;
-use base qw(CorTeX::Blueprint);
-use LaTeXML::Converter;
-use LaTeXML::Util::Config;
+package CorTeX::Service;
+use feature 'switch';
 
-our $opts=LaTeXML::Util::Config->new(local=>1,timeout=>120,profile=>'zbl');
-$opts->check;
+# Analysis, Converter and Aggregator services
 
-sub type {'conversion'}
+sub new {
+  my ($class, %options) = @_;
+  bless {%options}, $class; }
 
-sub convert {
-  my ($self,%options) = @_;
-  my $source = "literal:".$options{workload};
-  my $converter = LaTeXML::Converter->get_converter($opts);
-  $converter->prepare_session($opts);
-  my $response = $converter->convert($source);
-  my ($document, $status, $log) = map { $response->{$_} } qw(result status_code log) if defined $response;
+sub process {
+  my ($self,%options)=@_; 
+  my $response = {};
+  local $@ = undef;
+  my $eval_return = eval {
+    given (lc($self->type())) {
+      when ('analysis') {$response = $self->analyze(%options)}
+      when ('aggregation') {$response = $self->aggregate(%options)}
+      when ('conversion') {$response = $self->convert(%options)}
+      default {}
+    };
+    1;};
+  if (!$eval_return || $@) {
+    $response = {
+      status=>-4,
+      log=>"Fatal:Service:process $@"
+    };}
+  return $response; }
 
-  my $result={};
-  $result->{document}=$document;
-  $result->{status}= -$status -1; # Adapt to the CorTeX scheme
-  $result->{log} = $log;
-
-  return $result; }
-
+# Service API
+sub type {return;}
+sub convert {return;}
+sub map {return;}
+sub aggregate {return;}
 
 1;
