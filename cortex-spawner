@@ -39,6 +39,9 @@ use Unix::Processors;
 my $check_interval = 10;
 
 my @servers = @ARGV;
+if (!@servers) {
+  print STDERR "\nPlease specify at least one Gearman server to run, for example:\nperl cortex-spawner 127.0.0.1\n\n";
+  exit 0; }
 {
   my $Cache={ workers=> {} };
   $Cache->{processor_multiplier} = Unix::Processors->new->max_online;
@@ -53,14 +56,13 @@ my @servers = @ARGV;
     sleep $check_interval; }
   
   sub spawn_workers {
-    my ($missing) = @_;
-    my @services = @{$Cache->{available_services}};
-    #    # workers = 5 x ( # cpus ) x (# local services)
+    my ($needed) = @_;
     return unless (@servers);
+    my @services = keys %$needed;
     my $pid = 0;
     while (@services) {
       my $s = shift @services;
-      for my $num(1..$missing->{$s}) {
+      for my $num(1..$needed->{$s}) {
         # Fork a job for each missing worker
         $pid = fork();
         if ($pid == 0) {
@@ -89,6 +91,7 @@ my @servers = @ARGV;
     my $needed = {};
     my $cached_services = $Cache->{available_services};
     my $cached_worker_pids = $Cache->{workers};
+    # workers = 2 x ( # cpus ) x (# local services)
     my $processes_per_worker = 2 * $Cache->{processor_multiplier};
     foreach my $service(@$current_services) {
       unless (grep {$_ eq $service} @$cached_services) {
