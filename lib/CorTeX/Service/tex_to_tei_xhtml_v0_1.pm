@@ -42,18 +42,21 @@ sub convert {
   my ($latexml_dom, $status, $log) = map { $response->{$_} } qw(result status_code log) if defined $response;
   return {status=>-4,log=>$log."\nFatal:LaTeXML:empty No result created by LaTeXML"}
     unless (blessed($latexml_dom));
-  # Purify
+  
+  # II. Purify
   # TODO: Append the Purification reports to the $log
   my $purified_dom = LLaMaPUn::Preprocessor::Purify::purify_noparse($latexml_dom,verbose=>0);
   return {status=>-4,log=>$log."\nFatal:Purify:empty Purification did not return a result."}
    unless blessed($purified_dom);
-  # Tokenize
+  
+  # III. Tokenize
   # TODO: Append the Tokenization reports to the $log
   my $marktokens = LLaMaPUn::Preprocessor::MarkTokens->new(document=>$purified_dom,verbose=>0);
   my $tokenized_dom = $marktokens->process_document;
   return {status=>-4,log=>$log."\nFatal:MarkTokens:empty Tokenization did not return a result."}
     unless blessed($tokenized_dom);
-  # Move to TEI HTML
+
+  # IV. Move to TEI HTML
   # TODO: Append the Post-processing reports to the $log
   my $html_dom = xml_to_TEI_xhtml($tokenized_dom);
   return {status=>-4,log=>$log."\nFatal:TEI-XHTML:empty Post-processing did not return a result."}
