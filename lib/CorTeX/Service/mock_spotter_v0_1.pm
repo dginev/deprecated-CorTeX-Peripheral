@@ -15,34 +15,43 @@ package CorTeX::Service::mock_spotter_v0_1;
 use warnings;
 use strict;
 use Data::Dumper;
+use XML::LibXML;
 use base qw(CorTeX::Service);
 
 sub type {'analysis'}
 
 sub analyze {
   my ($self,%options) = @_;
+  my $status = -4; # Fatal unless we succeed
+  my $log; # TODO: Any messages?
   my $document = $options{workload};
-
-  # Spot single-word sentences: 
+  my $entry = $options{entry};
+  # Annotate with number of words in document
+  my $parser=XML::LibXML->new();
+  $parser->load_ext_dtd(0);
+  my $workload_dom = $parser->parse_string($document);
+  #Get an XPath context
+  my $xpc = XML::LibXML::XPathContext->new($workload_dom);
+  my @word_nodes = $xpc->findnodes('//*[local-name()="span" and @class="ltx_word"]');
+  my $word_count = scalar(@word_nodes);
+  my @sentence_nodes = $xpc->findnodes('//*[local-name()="span" and @class="ltx_sentence"]');
+  my $sentence_count = scalar(@sentence_nodes);
   my $result={};
-  $result->{annotations}=<<'EOL';
+  $result->{annotations}=<<"EOL";
 <rdf:RDF
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
   xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
-  xmlns:foaf="http://xmlns.com/foaf/0.1/">
-
-  <foaf:Person rdf:about="#danbri" xmlns:foaf="http://xmlns.com/foaf/0.1/">
-    <foaf:name>Dan Brickley</foaf:name>
-    <foaf:homepage rdf:resource="http://danbri.org/" />
-    <foaf:openid rdf:resource="http://danbri.org/" />
-    <foaf:img rdf:resource="/images/me.jpg" />
-  </foaf:Person>
+  xmlns:mock="http://kwarc.info/mock#">
+  <rdf:Description about="$entry">
+    <mock:words>$word_count</mock:words>
+    <mock:sentences>$sentence_count</mock:sentences>
+  </rdf:Description>
 </rdf:RDF>
 EOL
-  my $status = -4; # TODO
-  my $log = "Fatal:mock:todo Needs to be implemented.";
-  $result->{status}= $status; # Adapt to the CorTeX scheme
+  $status = $log ? -2 : -1; # If we reached here we succeeded
+  $result->{status} = $status;
   $result->{log} = $log;  
+  print STDERR "\nAnnotation result: \n",Dumper($result);
   return $result; }
 
 1;
