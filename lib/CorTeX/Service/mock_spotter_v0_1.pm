@@ -40,9 +40,8 @@ sub analyze {
   $result->{annotations}=<<"EOL";
 <rdf:RDF
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:rdfs="http://www.w3.org/2000/01/rdf-schema#"
   xmlns:mock="http://kwarc.info/mock#">
-  <rdf:Description about="$entry">
+  <rdf:Description about="file://$entry">
     <mock:words>$word_count</mock:words>
     <mock:sentences>$sentence_count</mock:sentences>
   </rdf:Description>
@@ -51,7 +50,6 @@ EOL
   $status = $log ? -2 : -1; # If we reached here we succeeded
   $result->{status} = $status;
   $result->{log} = $log;  
-  print STDERR "\nAnnotation result: \n",Dumper($result);
   return $result; }
 
 1;
