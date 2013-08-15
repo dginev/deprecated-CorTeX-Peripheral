@@ -43,6 +43,11 @@ if (!@servers) {
   print STDERR "\nPlease specify at least one Gearman server to run, for example:\nperl cortex-spawner 127.0.0.1\n\n";
   exit 0; }
 {
+  # Set up global state
+  local $SIG{'INT'} = \&stop_all; # Interrupt handler
+  local $SIG{'HUP'} = \&stop_all; # Apache Hangup handler
+  local $SIG{'KILL'} = \&stop_all; # Just good-old KILL handler
+
   my $Cache={ workers=> {} };
   $Cache->{processor_multiplier} = Unix::Processors->new->max_online;
   # Start cron loop managing the client and worker children
@@ -74,6 +79,9 @@ if (!@servers) {
       }
     }}
 
+  sub stop_all {
+    stop_workers();
+    exit 0; }
   sub stop_workers {
     my $workers = $Cache->{workers};
     foreach my $service (keys %$workers) {
