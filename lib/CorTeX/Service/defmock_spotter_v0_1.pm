@@ -11,7 +11,7 @@
 # | Deyan Ginev <d.ginev@jacobs-university.de>                  #_#     | #
 # | http://kwarc.info/people/dginev                            (o o)    | #
 # \=========================================================ooo==U==ooo=/ #
-package CorTeX::Service::mock_spotter_v0_1;
+package CorTeX::Service::defmock_spotter_v0_1;
 use warnings;
 use strict;
 use Data::Dumper;
@@ -32,18 +32,15 @@ sub analyze {
   my $workload_dom = $parser->parse_string($document);
   #Get an XPath context
   my $xpc = XML::LibXML::XPathContext->new($workload_dom);
-  my @word_nodes = $xpc->findnodes('//*[local-name()="span" and @class="ltx_word"]');
-  my $word_count = scalar(@word_nodes);
-  my @sentence_nodes = $xpc->findnodes('//*[local-name()="span" and @class="ltx_sentence"]');
-  my $sentence_count = scalar(@sentence_nodes);
+  my @definition_nodes = $xpc->findnodes('//*[local-name()="span" and @class="ltx_definition"]');
+  my $definition_count = scalar(@definition_nodes);
   my $result={};
   $result->{annotations}=<<"EOL";
 <rdf:RDF
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
-  xmlns:mock="http://kwarc.info/mock#">
+  xmlns:defmock="http://kwarc.info/defmock#">
   <rdf:Description rdf:about="file://$entry">
-    <mock:words>$word_count</mock:words>
-    <mock:sentences>$sentence_count</mock:sentences>
+    <defmock:definitions>$definition_count</defmock:definitions>
   </rdf:Description>
 </rdf:RDF>
 EOL
