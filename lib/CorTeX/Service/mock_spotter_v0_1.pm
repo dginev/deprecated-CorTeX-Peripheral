@@ -1,6 +1,6 @@
 # /=====================================================================\ #
 # |  CorTeX Framework                                                   | #
-# | Initial Preprocessing from Tex to TEI-near XHTML                    | #
+# | An example Analysis service for counting words and sentences        | #
 # |=====================================================================| #
 # | Part of the LaMaPUn project: https://trac.kwarc.info/lamapun/       | #
 # |  Research software, produced as part of work done by:               | #
