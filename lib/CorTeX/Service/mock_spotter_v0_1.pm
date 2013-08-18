@@ -16,6 +16,8 @@ use warnings;
 use strict;
 use Data::Dumper;
 use XML::LibXML;
+# Subclass the CorTeX::Service abstract class
+# to inherit all necessary infrastructure
 use base qw(CorTeX::Service);
 
 sub type {'analysis'}
