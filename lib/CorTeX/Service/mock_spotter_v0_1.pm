@@ -28,17 +28,21 @@ sub analyze {
   my $log; # TODO: Any messages?
   my $document = $options{workload};
   my $entry = $options{entry};
-  # Annotate with number of words in document
+  # Prepare an XML parser
   my $parser=XML::LibXML->new();
   $parser->load_ext_dtd(0);
+  # Parse the given workload
   my $workload_dom = $parser->parse_string($document);
   #Get an XPath context
   my $xpc = XML::LibXML::XPathContext->new($workload_dom);
+  # Annotate with the number of tokenized words in the document
   my @word_nodes = $xpc->findnodes('//*[local-name()="span" and @class="ltx_word"]');
   my $word_count = scalar(@word_nodes);
+  # Annotate with the number of tokenized sentences in the document
   my @sentence_nodes = $xpc->findnodes('//*[local-name()="span" and @class="ltx_sentence"]');
   my $sentence_count = scalar(@sentence_nodes);
   my $result={};
+  # Annotations in RDF/XML
   $result->{annotations}=<<"EOL";
 <rdf:RDF
   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
