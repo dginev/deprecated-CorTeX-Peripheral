@@ -52,7 +52,7 @@ $Cache->{processor_multiplier} = Unix::Processors->new->max_online;
 $SIG{'INT'} = \&stop_all; # Interrupt handler
 $SIG{'HUP'} = \&stop_all; # Apache Hangup handler
 $SIG{'KILL'} = \&stop_all; # Just good-old KILL handler
-$SIG{'TERM'} = \&stop_all; # Just good-old KILL handler
+$SIG{'TERM'} = \&stop_all; # TERM handler
 
 sub stop_all {
   stop_workers();
@@ -65,8 +65,8 @@ sub stop_workers {
   $Cache->{workers} = {}; }
 sub stop_child {
   my ($pid) = @_;
-  # Send a SIGINT to the child job
-  kill 2, $pid;
+  # Send a SIGTERM to the child job
+  kill 15, $pid;
   waitpid($pid,0); }
 
 # Start cron loop managing the client and worker children
