@@ -21,7 +21,7 @@ DAEMON=${exec_prefix}/local/bin/cortex-spawner
 PIDDIR=/var/run/cortex-peripheral
 PIDFILE=${PIDDIR}/cortex-peripheral.pid
 #CORTEXUSER="cortex"
-GEARMAN_URLS="127.0.0.1"
+GEARMAN_URLS="2001:0638:0709:0708::5" # mercury.eecs.jacobs-university.de
 
 test -x ${DAEMON} || exit 0
 
