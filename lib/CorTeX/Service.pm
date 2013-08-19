@@ -14,6 +14,9 @@
 package CorTeX::Service;
 use feature 'switch';
 
+use vars qw($VERSION);
+$VERSION  = "0.1";
+
 # Analysis, Converter and Aggregator services
 
 sub new {
