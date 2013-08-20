@@ -8,7 +8,7 @@ Peripheral management for the CorTeX system:
 
 #### Quick Setup
 
-Painless setup for CorTeX processing on any machine:
+Painless setup for CorTeX processing on any machine (assuming all [prerequisites](./INSTALL.md) are installed):
 
 ```shell
 git clone https://github.com/dginev/CorTeX-Peripheral
