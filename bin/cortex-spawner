@@ -115,7 +115,7 @@ sub workers_needed {
     my $verified_list = [];
     foreach my $pid (@$pid_list) {
       if (kill 0, $pid) {
-        push $verified_list, $pid; }
+        push @$verified_list, $pid; }
       else {
         $missing_processes++; }}
     $cached_worker_pids->{$service} = $verified_list;
