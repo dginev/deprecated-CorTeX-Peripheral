@@ -20,6 +20,7 @@ use LaTeXML::Util::Config;
 
 our $opts=LaTeXML::Util::Config->new(local=>1,whatsin=>'document',whatsout=>'document',
   format=>'html5',mathparse=>'RecDescent',timeout=>120,post=>1,math_formats=>['pmml','cmml'],
+  preload=>['[ids]latexml.sty'],css=>['http://latexml.mathweb.org/css/external/LaTeXML.css'],
   defaultresources=>0);
 $opts->check;
 
