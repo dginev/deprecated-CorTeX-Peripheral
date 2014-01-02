@@ -27,7 +27,7 @@ BEGIN {
   $RealBin_safe = $1;
   die 'Fatal:IO:tainted RealBin was tainted! Failing...'
    unless ($RealBin_safe && (-e $RealBin_safe.'/cortex-worker')); 
-  $libdir = $RealBin_safe."/lib"; }
+  $libdir = $RealBin_safe."/../lib"; }
 
 if (-d $libdir) {
   use lib $libdir;}
@@ -38,6 +38,9 @@ $SIG{'HUP'} = \&stop_immediate; # Apache Hangup handler
 $SIG{'KILL'} = \&stop_immediate; # Just good-old KILL handler
 $SIG{'TERM'} = \&stop_immediate; # TERM handler
 sub stop_immediate { exit 0; }
+
+# CorTeX workhorses have lowest priority, to avoid overloading the machine
+setpriority(0, $$, 20);
 
 my ($s,@servers) = @ARGV;
 
