@@ -29,7 +29,7 @@ use File::Basename;
 my ($FILE_BASE,$libdir);
 BEGIN {
     $FILE_BASE = dirname(__FILE__);
-    $libdir = $FILE_BASE."/lib"; }
+    $libdir = $FILE_BASE."/../lib"; }
 if (-d $libdir) {
   use lib $libdir; }
 
