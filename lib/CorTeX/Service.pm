@@ -47,5 +47,6 @@ sub type {return;}
 sub convert {return;}
 sub map {return;}
 sub aggregate {return;}
+sub job_limit {0;}
 
 1;

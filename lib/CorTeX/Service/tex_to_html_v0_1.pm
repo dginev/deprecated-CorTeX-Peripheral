@@ -27,6 +27,7 @@ our $opts=LaTeXML::Util::Config->new(local=>1,whatsin=>'archive',whatsout=>'arch
 $opts->check;
 
 sub type {'conversion'}
+sub job_limit {10;}
 sub convert {
   my ($self,$workload) = @_;
   my $source = "literal:".$workload;

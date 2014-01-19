@@ -51,7 +51,9 @@ if ($eval_return && (!$@)) {
   $service = eval { "CorTeX::Service::$s"->new(); }; }
 else {
   print STDERR "Service $s not available, exiting.\n$@\n";
-  exit; }          
+  exit; }
+my $job_limit = $service->job_limit();          
+my $jobs = 0;
 $worker->register_function(
   $s => sub {
     my $job = shift;
@@ -65,6 +67,11 @@ $worker->register_function(
     else {
       $job->complete($response); }
     print STDERR "[".localtime()."] Job completed by worker $$\n";
+    if ($job_limit) {
+      $jobs++;
+      if ($jobs > $job_limit) {
+        exec("$RealBin_safe/cortex-worker",$s,@servers)
+          or die("Fatal:server:restart Worker autoflush Failed!"); } }
   },
 );
 
