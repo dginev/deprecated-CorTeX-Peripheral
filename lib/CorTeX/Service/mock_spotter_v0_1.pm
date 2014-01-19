@@ -16,6 +16,7 @@ use warnings;
 use strict;
 use Data::Dumper;
 use XML::LibXML;
+use JSON::XS;
 # Subclass the CorTeX::Service abstract class
 # to inherit all necessary infrastructure
 use base qw(CorTeX::Service);
@@ -23,11 +24,12 @@ use base qw(CorTeX::Service);
 sub type {'analysis'}
 
 sub analyze {
-  my ($self,%options) = @_;
+  my ($self,$workload) = @_;
+  my $options = decode_json($workload);
   my $status = -4; # Fatal unless we succeed
   my $log; # TODO: Any messages?
-  my $document = $options{workload};
-  my $entry = $options{entry};
+  my $document = $options->{workload};
+  my $entry = $options->{entry};
   # Prepare an XML parser
   my $parser=XML::LibXML->new();
   $parser->load_ext_dtd(0);

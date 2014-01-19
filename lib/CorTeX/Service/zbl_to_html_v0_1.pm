@@ -18,16 +18,17 @@ use base qw(CorTeX::Service);
 use LaTeXML::Converter;
 use LaTeXML::Util::Config;
 
-our $opts=LaTeXML::Util::Config->new(local=>1,timeout=>120,profile=>'zbl');
-$opts->check;
+our $config=LaTeXML::Util::Config->new(local=>1,timeout=>120,profile=>'zbl');
+$config->check;
 
 sub type {'conversion'}
 
 sub convert {
-  my ($self,%options) = @_;
-  my $source = "literal:".$options{workload};
-  my $converter = LaTeXML::Converter->get_converter($opts);
-  $converter->prepare_session($opts);
+  my ($self,$workload) = @_;
+  my $options = decode_json($workload);
+  my $source = "literal:".$options->{workload};
+  my $converter = LaTeXML::Converter->get_converter($config);
+  $converter->prepare_session($config);
   my $response = $converter->convert($source);
   my ($document, $status, $log) = map { $response->{$_} } qw(result status_code log) if defined $response;
 

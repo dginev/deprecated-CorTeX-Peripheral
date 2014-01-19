@@ -22,7 +22,7 @@ use LLaMaPUn::LaTeXML;
 use LLaMaPUn::Preprocessor::Purify;
 use LLaMaPUn::Preprocessor::MarkTokens;
 
-our $opts=LaTeXML::Util::Config->new(local=>1,whatsin=>'document',whatsout=>'document',
+our $opts=LaTeXML::Util::Config->new(local=>1,whatsin=>'archive',whatsout=>'document',
   format=>'dom',mathparse=>'no',timeout=>120,post=>0,preload=>['[ids]latexml.sty'],
   defaultresources=>0,css=>['http://latexml.mathweb.org/css/external/LaTeXML.css']);
 $opts->check;
@@ -30,9 +30,8 @@ $opts->check;
 sub type {'conversion'}
 
 sub convert {
-  my ($self,%options) = @_;
+  my ($self,$workload) = @_;
   # I. Convert to XML
-  my $workload = $options{workload};
   return {status=>-4,log=>"Fatal:workload:empty No workload provided on input"}
     unless ($workload && (length($workload)>0));
   my $source = "literal:".$workload;
