@@ -38,11 +38,13 @@ sub convert {
   my $cortex_status = -$status -1; 
   my $payload='';
   my $content_handle = IO::String->new($payload);
-  if ($result && (ref($result) eq 'Archive::Zip::Archive')) {
-    $result->addString("$cortex_status",'_cortex_status.txt');
-    $result->addString("$log",'_cortex_log.txt');
-    # Finally, write the ZIP to a string and return
-    undef $payload unless ($result->writeToFileHandle($content_handle) == AZ_OK); }
+  if ((!$result) || (ref($result) ne 'Archive::Zip::Archive')) {
+    # Empty fatal errors should still return log messages
+    $result = Archive::Zip->new(); }
+  $result->addString("$cortex_status",'_cortex_status.txt');
+  $result->addString("$log",'_cortex_log.txt');
+  # Finally, write the ZIP to a string and return
+  undef $payload unless ($result->writeToFileHandle($content_handle) == AZ_OK);
   return $payload; }
 
 1;
