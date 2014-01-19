@@ -103,7 +103,7 @@ sub workers_needed {
   my $cached_services = $Cache->{available_services};
   my $cached_worker_pids = $Cache->{workers};
   # workers = 2 x ( # cpus ) x (# local services)
-  my $processes_per_worker = 2 * $Cache->{processor_multiplier};
+  my $processes_per_worker = $Cache->{processor_multiplier};
   foreach my $service(@$current_services) {
     unless (grep {$_ eq $service} @$cached_services) {
       # New services get the max count of workers to boot
