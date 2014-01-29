@@ -19,6 +19,7 @@ use Data::Dumper;
 
 use AnyEvent::Gearman;
 use JSON::XS qw(decode_json encode_json);
+use Net::Address::IP::Local;
 
 use FindBin;
 my ($RealBin_safe,$libdir);
@@ -43,6 +44,7 @@ sub stop_immediate { exit 0; }
 setpriority(0, $$, 20);
 
 my ($s,@servers) = @ARGV;
+my $identity = Net::Address::IP::Local->public;
 
 my $worker = gearman_worker(@servers);
 my $service;
