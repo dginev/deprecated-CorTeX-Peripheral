@@ -16,13 +16,13 @@ use warnings;
 use strict;
 use Scalar::Util qw/blessed/;
 use base qw(CorTeX::Service);
-use LaTeXML::Converter;
-use LaTeXML::Util::Config;
+use LaTeXML;
+use LaTeXML::Common::Config;
 use LLaMaPUn::LaTeXML;
 use LLaMaPUn::Preprocessor::Purify;
 use LLaMaPUn::Preprocessor::MarkTokens;
 
-our $opts=LaTeXML::Util::Config->new(local=>1,whatsin=>'archive',whatsout=>'document',
+our $opts=LaTeXML::Common::Config->new(local=>1,whatsin=>'archive',whatsout=>'document',
   format=>'dom',mathparse=>'no',timeout=>120,post=>0,preload=>['[ids]latexml.sty'],
   defaultresources=>0,css=>['http://latexml.mathweb.org/css/external/LaTeXML.css']);
 $opts->check;
@@ -35,7 +35,7 @@ sub convert {
   return {status=>-4,log=>"Fatal:workload:empty No workload provided on input"}
     unless ($workload && (length($workload)>0));
   my $source = "literal:".$workload;
-  my $converter = LaTeXML::Converter->get_converter($opts);
+  my $converter = LaTeXML->get_converter($opts);
   $converter->prepare_session($opts);
   my $response = $converter->convert($source);
   my ($latexml_dom, $status, $log) = map { $response->{$_} } qw(result status_code log) if defined $response;
