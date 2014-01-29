@@ -24,14 +24,14 @@ sub new {
   bless {%options}, $class; }
 
 sub process {
-  my ($self,%options)=@_; 
+  my ($self,@arguments)=@_; 
   my $response = {};
   local $@ = undef;
   my $eval_return = eval {
     given (lc($self->type())) {
-      when ('analysis') {$response = $self->analyze(%options)}
-      when ('aggregation') {$response = $self->aggregate(%options)}
-      when ('conversion') {$response = $self->convert(%options)}
+      when ('analysis') {$response = $self->analyze(@arguments)}
+      when ('aggregation') {$response = $self->aggregate(@arguments)}
+      when ('conversion') {$response = $self->convert(@arguments)}
       default {}
     };
     1;};
