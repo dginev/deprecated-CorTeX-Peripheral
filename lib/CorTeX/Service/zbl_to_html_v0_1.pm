@@ -15,7 +15,7 @@ package CorTeX::Service::zbl_to_html_v0_1;
 use warnings;
 use strict;
 use base qw(CorTeX::Service);
-use LaTeXML::Converter;
+use LaTeXML;
 use LaTeXML::Common::Config;
 
 our $config=LaTeXML::Common::Config->new(local=>1,timeout=>120,profile=>'zbl');
