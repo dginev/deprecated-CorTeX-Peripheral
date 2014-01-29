@@ -22,9 +22,10 @@ WriteMakefile(
 	PREREQ_PM => { 
 		"XML::LibXML"=>0,
 		"LLaMaPUn"=>0,
+		"Net::Address::IP::Local"=>0,
 		"AnyEvent::Gearman"=>0,
 		"Unix::Processors"=>0,
-		"LaTeXML"=>0
+		"LaTeXML"=>'0.7.99'
 	},
 	EXE_FILES => ['bin/cortex-spawner','bin/cortex-worker'],
 	macro => $MORE_MACROS,

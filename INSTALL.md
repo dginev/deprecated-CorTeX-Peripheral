@@ -6,7 +6,7 @@ For now, assuming you're running a Debian-based OS
 
   0.1. Debian packages
 
-  ```sudo apt-get install libanyevent-perl cpanminus```
+  ```sudo apt-get install libanyevent-perl libnet-address-ip-local-perl cpanminus```
 
   0.2. CPAN modules
 
