@@ -92,7 +92,6 @@ sub spawn_workers {
       if ($pid == 0) {
         exec(catfile($RealBin_safe,"cortex-worker"),$s,@servers);
       } else {
-        print STDERR "Started Worker #$num for $s : process $pid\n";
         push @{$Cache->{workers}->{$s}}, $pid;
       }
     }

@@ -72,9 +72,10 @@ $worker->register_function(
     if ($job_limit) {
       $jobs++;
       if ($jobs > $job_limit) {
+        print STDERR "Restarting worker $$ for $s\n";
         exec("$RealBin_safe/cortex-worker",$s,@servers)
           or die("Fatal:server:restart Worker autoflush Failed!"); } }
   },
 );
-
+print STDERR "Started Worker $$ for $s\n";
 AnyEvent->condvar->recv;
