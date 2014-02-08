@@ -18,22 +18,21 @@ use warnings;
 use Encode;
 use Data::Dumper;
 use FindBin;
+use File::Basename;
+use File::Spec::Functions qw(catdir catfile);
+
+my ($FILE_BASE,$libdir);
 my $RealBin_safe;
 BEGIN {
   $FindBin::RealBin =~ /^([^\0]+)\z/; # Valid Unix path TODO: Windows, revisit regexp
   $RealBin_safe = $1;
   die 'Fatal:IO:tainted RealBin was tainted! Failing...'
-   unless ($RealBin_safe && (-e $RealBin_safe.'/cortex-spawner')); }
-
-use File::Basename;
-my ($FILE_BASE,$libdir);
-BEGIN {
-    $FILE_BASE = dirname(__FILE__);
-    $libdir = $FILE_BASE."/../lib"; }
+   unless ($RealBin_safe && (-e catfile($RealBin_safe,'cortex-spawner')));
+   $libdir = catdir($FILE_BASE,'..','lib'); }
 if (-d $libdir) {
   use lib $libdir; }
 
-my ($service_dir) = grep(-d $_, map("$_/CorTeX/Service", @INC));
+my ($service_dir) = grep(-d $_, map(catdir($_,'CorTeX','Service'), @INC));
 
 use Unix::Processors;
 my $check_interval = 10;
@@ -90,7 +89,7 @@ sub spawn_workers {
       # Fork a job for each missing worker
       $pid = fork();
       if ($pid == 0) {
-        exec("$RealBin_safe/cortex-worker",$s,@servers);
+        exec(catfile($RealBin_safe,"cortex-worker"),$s,@servers);
       } else {
         print STDERR "Started Worker #$num for $s : process $pid\n";
         push @{$Cache->{workers}->{$s}}, $pid;
@@ -132,7 +131,7 @@ sub available_services {
   opendir(my $dh, $service_dir)
    || die "can't opendir $service_dir: $!";
   my @default_services;
-  my @default_service_classes = sort grep { /\.pm$/ && -f "$service_dir/$_" } readdir($dh);
+  my @default_service_classes = sort grep { /\.pm$/ && -f catfile($service_dir,"$_") } readdir($dh);
   closedir $dh;
   foreach my $service_file(@default_service_classes) {
     $service_file =~ s/\.pm$//;
