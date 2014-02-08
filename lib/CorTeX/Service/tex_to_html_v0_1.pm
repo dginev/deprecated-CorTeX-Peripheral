@@ -21,7 +21,7 @@ use Archive::Zip qw(:CONSTANTS :ERROR_CODES);
 use IO::String;
 
 our $opts=LaTeXML::Common::Config->new(local=>1,whatsin=>'archive',whatsout=>'archive::zip::perl',
-  format=>'html5',mathparse=>'RecDescent',timeout=>120,post=>1,math_formats=>['pmml','cmml'],
+  format=>'html5',mathparse=>'RecDescent',post=>1,math_formats=>['pmml','cmml'],
   preload=>['[ids]latexml.sty'],css=>['http://latexml.mathweb.org/css/external/LaTeXML.css'],
   defaultresources=>0,inputencoding=>'iso-8859-1',timeout=>300);
 $opts->check;
