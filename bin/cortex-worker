@@ -86,4 +86,10 @@ $worker->register_function(
   }
 );
 print STDERR "Started Worker $$ for $s\n";
-AnyEvent->condvar->recv;
+
+# Non-busy daemon
+while(1) {
+ my $loop_cv = AnyEvent->condvar;
+ my $wait_timeout = AnyEvent->timer(after => 60, cb => sub { $loop_cv->send });
+ $loop_cv->recv;
+}
