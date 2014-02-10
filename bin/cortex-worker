@@ -39,6 +39,7 @@ $SIG{'HUP'} = \&stop_immediate; # Apache Hangup handler
 $SIG{'KILL'} = \&stop_immediate; # Just good-old KILL handler
 $SIG{'TERM'} = \&stop_immediate; # TERM handler
 sub stop_immediate { exit 0; }
+my $timeout_limit = 600; # If worker isn't done in 10 minutes - timeout
 
 setpriority(0, $$, 20);
 
@@ -46,14 +47,12 @@ my ($s,@servers) = @ARGV;
 my $identity = Net::Address::IP::Local->public;
 
 # Restart support for keeping the worker operational over long inactivity periods
-$SIG{'ALRM'} = \&restart_worker_timeout;
 sub restart_worker {
   my ($reason) = @_;
   print STDERR "$reason reached, restarting worker $$ for $s\n";
   exec("$RealBin_safe/cortex-worker",$s,@servers)
     or die("Fatal:cortex-worker:restart Worker $$ autoflush Failed!"); }
 # CorTeX workhorses have lowest priority, to avoid overloading the machine
-sub restart_worker_timeout { restart_worker('Timeout');}
 
 my $worker = gearman_worker(@servers);
 my $service;
@@ -65,10 +64,16 @@ else {
   exit; }
 my $job_limit = $service->job_limit();          
 my $jobs = 0;
+my ($job_timeout,$inactivity_timeout);
 $worker->register_function(
   $s => sub {
-    alarm(0); # Reset alarms, we're working here!
     my $job = shift;
+    undef $inactivity_timeout; # Reset inactivity timer, we're processing a job.
+    $job_timeout = AnyEvent->timer(after => $timeout_limit, cb => sub { # Set job timer
+      # When we timeout, fail this job and restart the worker
+      $job->fail('Fatal:cortex-worker:timeout Worker timed out after $timeout_limit seconds.');
+      restart_worker('Timeout');
+    });   
     print STDERR "[".localtime()."] Job received by worker $$\n";
     my $response = $service->process($job->workload);
     $response //= {};
@@ -82,7 +87,10 @@ $worker->register_function(
     if ($job_limit) {
       $jobs++;
       restart_worker('Job limit') if ($jobs > $job_limit); }
-    alarm(60); # Restart if no new job arrives in a minute
+    undef $job_timeout; # Reset job timer
+    # Restart after a minute of inactivity
+    $inactivity_timeout = AnyEvent->timer(after => 60, cb => sub { 
+      restart_worker('Inactivity Timeout'); });   
   }
 );
 print STDERR "Started Worker $$ for $s\n";
@@ -90,6 +98,6 @@ print STDERR "Started Worker $$ for $s\n";
 # Non-busy daemon
 while(1) {
  my $loop_cv = AnyEvent->condvar;
- my $wait_timeout = AnyEvent->timer(after => 60, cb => sub { $loop_cv->send });
+ my $wait_daemon = AnyEvent->timer(after => 60, cb => sub { $loop_cv->send });
  $loop_cv->recv;
 }
