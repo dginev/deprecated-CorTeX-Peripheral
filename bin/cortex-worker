@@ -51,7 +51,7 @@ sub restart_worker {
   my ($reason) = @_;
   print STDERR "$reason reached, restarting worker $$ for $s\n";
   exec("$RealBin_safe/cortex-worker",$s,@servers)
-    or die("Fatal:server:restart Worker autoflush Failed!"); }
+    or die("Fatal:cortex-worker:restart Worker $$ autoflush Failed!"); }
 # CorTeX workhorses have lowest priority, to avoid overloading the machine
 sub restart_worker_timeout { restart_worker('Timeout');}
 
