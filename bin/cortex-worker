@@ -40,11 +40,20 @@ $SIG{'KILL'} = \&stop_immediate; # Just good-old KILL handler
 $SIG{'TERM'} = \&stop_immediate; # TERM handler
 sub stop_immediate { exit 0; }
 
-# CorTeX workhorses have lowest priority, to avoid overloading the machine
 setpriority(0, $$, 20);
 
 my ($s,@servers) = @ARGV;
 my $identity = Net::Address::IP::Local->public;
+
+# Restart support for keeping the worker operational over long inactivity periods
+$SIG{'ALRM'} = \&restart_worker_timeout;
+sub restart_worker {
+  my ($reason) = @_;
+  print STDERR "$reason reached, restarting worker $$ for $s\n";
+  exec("$RealBin_safe/cortex-worker",$s,@servers)
+    or die("Fatal:server:restart Worker autoflush Failed!"); }
+# CorTeX workhorses have lowest priority, to avoid overloading the machine
+sub restart_worker_timeout { restart_worker('Timeout');}
 
 my $worker = gearman_worker(@servers);
 my $service;
@@ -58,6 +67,7 @@ my $job_limit = $service->job_limit();
 my $jobs = 0;
 $worker->register_function(
   $s => sub {
+    alarm(0); # Reset alarms, we're working here!
     my $job = shift;
     print STDERR "[".localtime()."] Job received by worker $$\n";
     my $response = $service->process($job->workload);
@@ -71,11 +81,9 @@ $worker->register_function(
     print STDERR "[".localtime()."] Job completed by worker $$\n";
     if ($job_limit) {
       $jobs++;
-      if ($jobs > $job_limit) {
-        print STDERR "Restarting worker $$ for $s\n";
-        exec("$RealBin_safe/cortex-worker",$s,@servers)
-          or die("Fatal:server:restart Worker autoflush Failed!"); } }
-  },
+      restart_worker('Job limit') if ($jobs > $job_limit); }
+    alarm(60); # Restart if no new job arrives in a minute
+  }
 );
 print STDERR "Started Worker $$ for $s\n";
 AnyEvent->condvar->recv;
