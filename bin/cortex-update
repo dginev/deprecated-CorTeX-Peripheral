@@ -1,0 +1,31 @@
+#!/usr/bin/env perl
+# /=====================================================================\ #
+# |  CorTeX Framework                                                   | #
+# | Update the components of a CorTeX Peripheral installation           | #
+# |=====================================================================| #
+# | Part of the LaMaPUn project: https://trac.kwarc.info/lamapun/       | #
+# |  Research software, produced as part of work done by:               | #
+# |  the KWARC group at Jacobs University                               | #
+# | Copyright (c) 2012                                                  | #
+# | Released under the GNU Public License                               | #
+# |---------------------------------------------------------------------| #
+# | Deyan Ginev <d.ginev@jacobs-university.de>                  #_#     | #
+# | http://kwarc.info/people/dginev                            (o o)    | #
+# \=========================================================ooo==U==ooo=/ #
+use strict;
+use warnings;
+
+my $report = q{};
+my $hostname = `hostname`;
+chomp($hostname);
+if ($hostname eq 'master') {
+  # We're on HULK, get the revision report from a level down:
+  print `ssh node100 '~/CorTeX-Peripheral/bin/cortex-update'` ||''; }
+else {
+  $report .= `cpanm git://github.com/brucemiller/LaTeXML.git`;
+  #$report .= `cpanm git://github.com/KWARC/LaTeXML-Plugin-arXMLiv.git`;
+  $report .= `cd ~/CorTeX-Peripheral; git pull; perl Makefile.PL; make; make test`; # make test?
+}
+# 5. Print back the report:
+print "$report\n";
+exit 0;
