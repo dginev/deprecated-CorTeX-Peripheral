@@ -12,7 +12,8 @@
 # | http://kwarc.info/people/dginev                            (o o)    | #
 # \=========================================================ooo==U==ooo=/ #
 package CorTeX::Service;
-use feature 'switch';
+use strict;
+use warnings;
 
 use vars qw($VERSION);
 $VERSION  = "0.1";
@@ -28,18 +29,15 @@ sub process {
   my $response = {};
   local $@ = undef;
   my $eval_return = eval {
-    given (lc($self->type())) {
-      when ('analysis') {$response = $self->analyze(@arguments)}
-      when ('aggregation') {$response = $self->aggregate(@arguments)}
-      when ('conversion') {$response = $self->convert(@arguments)}
-      default {}
-    };
-    1;};
+    my $service_type = lc($self->type())||'';
+    if ($service_type eq 'conversion') {$response = $self->convert(@arguments);}
+    elsif ($service_type eq 'analysis') {$response = $self->analyze(@arguments);}
+    elsif ($service_type eq 'aggregation') {$response = $self->aggregate(@arguments);}  
+    1; };
   if (!$eval_return || $@) {
     $response = {
       status=>-4,
-      log=>"Fatal:Service:process $@"
-    };}
+      log=>"Fatal:Service:process $@" }; }
   return $response; }
 
 # Service API
