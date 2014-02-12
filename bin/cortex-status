@@ -19,7 +19,7 @@ use Unix::Processors;
 
 my $report = {};
 my $hostname = `hostname`;
-print STDERR "Host: $hostname\n";
+chomp($hostname);
 if ($hostname eq 'master') {
   # We're on HULK, get the revision report from a level down:
   $report = decode_json(`ssh node100 ~/CorTeX-Peripheral/bin/cortex-status` ||'');
