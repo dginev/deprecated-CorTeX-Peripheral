@@ -1,0 +1,27 @@
+#!/usr/bin/env perl
+# /=====================================================================\ #
+# |  CorTeX Framework                                                   | #
+# | A Generic Worker for Gearman                                        | #
+# |=====================================================================| #
+# | Part of the LaMaPUn project: https://trac.kwarc.info/lamapun/       | #
+# |  Research software, produced as part of work done by:               | #
+# |  the KWARC group at Jacobs University                               | #
+# | Copyright (c) 2012                                                  | #
+# | Released under the GNU Public License                               | #
+# |---------------------------------------------------------------------| #
+# | Deyan Ginev <d.ginev@jacobs-university.de>                  #_#     | #
+# | http://kwarc.info/people/dginev                            (o o)    | #
+# \=========================================================ooo==U==ooo=/ #
+use strict;
+use warnings;
+use JSON::XS qw(encode_json);
+
+my $report = {};
+# We want to know revisions of:
+# CorTeX-Peripheral
+$report->{cortex_peripheral_revision} = `cd ~/git/CorTeX-Peripheral; git log --max-count=1 --abbrev-commit --pretty="\%h"`;
+chomp($report->{cortex_peripheral_revision});
+# LaTeXML
+$report->{latexml_revision} = `perl -MLaTeXML -e 'print \$LaTeXML::REVISION;'`;
+print encode_json($report),"\n";
+exit 0;
