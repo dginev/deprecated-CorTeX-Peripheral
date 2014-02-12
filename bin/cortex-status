@@ -14,7 +14,7 @@
 # \=========================================================ooo==U==ooo=/ #
 use strict;
 use warnings;
-use JSON::XS qw(encode_json);
+use JSON::XS qw(encode_json decode_json);
 use Unix::Processors;
 
 my $report = {};
