@@ -22,7 +22,7 @@ if ($hostname eq 'master') {
   # We're on HULK, get the revision report from a level down:
   print `ssh node100 '~/CorTeX-Peripheral/bin/cortex-update'` ||''; }
 else {
-  $report .= `cpanm git://github.com/brucemiller/LaTeXML.git`;
+  $report .= `TMPDIR=/tmp; cpanm git://github.com/brucemiller/LaTeXML.git`;
   #$report .= `cpanm git://github.com/KWARC/LaTeXML-Plugin-arXMLiv.git`;
   $report .= `cd ~/CorTeX-Peripheral; git pull; perl Makefile.PL; make; make test`; # make test?
 }
