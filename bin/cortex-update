@@ -20,8 +20,9 @@ my $report = q{};
 my $hostname = `hostname`;
 chomp($hostname);
 if ($hostname eq 'master') {
+  my $parameter_string = join(" ",keys %parameters);
   # We're on HULK, get the revision report from a level down:
-  print `ssh node100 '~/CorTeX-Peripheral/bin/cortex-update'` ||''; }
+  print `ssh node100 '~/CorTeX-Peripheral/bin/cortex-update $parameter_string'` ||''; }
 else {
   $report .= `cd ~/CorTeX-Peripheral; git pull; perl Makefile.PL; make; make test` if $parameters{cortexp}; # make test?
   #TODO: We should receive the current Git revision maybe, to avoid reinstalling? Or does the server take care of that?
