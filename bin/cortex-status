@@ -15,13 +15,23 @@
 use strict;
 use warnings;
 use JSON::XS qw(encode_json);
+use Unix::Processors;
 
 my $report = {};
 # We want to know revisions of:
-# CorTeX-Peripheral
-$report->{cortex_peripheral_revision} = `cd ~/git/CorTeX-Peripheral; git log --max-count=1 --abbrev-commit --pretty="\%h"`;
+# 1. CorTeX-Peripheral
+#    TODO: Figure out a more robust method for finding the CorTeX-Peripheral directory
+$report->{cortex_peripheral_revision} = `cd ~/CorTeX-Peripheral; git log --max-count=1 --abbrev-commit --pretty="\%h"`;
 chomp($report->{cortex_peripheral_revision});
-# LaTeXML
+# 2. LaTeXML
 $report->{latexml_revision} = `perl -MLaTeXML -e 'print \$LaTeXML::REVISION;'`;
+# 3. CorTeX worker processes
+my $ps_summary = `ps -aef | grep cortex-worker`;
+my @process_descriptions = grep {length($_);} map {/cortex\-worker\s+(\S+)/ ? $1 : ''} split("\n",$ps_summary);
+$report->{worker_processes} = scalar(@process_descriptions);
+# 4. CPUs available
+$report->{machine_cpus} = Unix::Processors->new->max_online;
+
+# 5. Print back the report:
 print encode_json($report),"\n";
 exit 0;
