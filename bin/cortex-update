@@ -25,6 +25,15 @@ else {
   $report .= `TMPDIR=/tmp; cpanm git://github.com/brucemiller/LaTeXML.git`;
   #$report .= `cpanm git://github.com/KWARC/LaTeXML-Plugin-arXMLiv.git`;
   $report .= `cd ~/CorTeX-Peripheral; git pull; perl Makefile.PL; make; make test`; # make test?
+  my ($cortex_spawner) = grep {defined} map {/^\w+\s+(\d+).+cortex\-spawner\s(.+)$/ ? [$1,$2] : undef} grep {/perl/} split("\n",`ps -ef |grep cortex-spawner`||'');
+  if ($cortex_spawner) {
+    my $pid = $cortex_spawner->[0];
+    my $args = $cortex_spawner->[1];
+    # Restart the spawner so that it picks up new definitions:
+    if (kill 'KILL', $pid) {
+      $report .= `nohup perl ~/CorTeX-Peripheral/bin/cortex-spawner $args &`;
+    }
+  }
 }
 # 5. Print back the report:
 print "$report\n";
