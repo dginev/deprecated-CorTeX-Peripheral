@@ -76,10 +76,10 @@ $worker->register_function(
     });   
     print STDERR "[".localtime()."] Job received by worker $$\n";
     my $response = $service->process($job->workload);
-    $response //= {};
+    $response = {} unless defined $response;
     if (ref($response) eq 'HASH') {
-      $response->{log} //= "Fatal:Gearman:worker Processing failed silently";
-      $response->{status} //= -4; # TODO: Fatal?
+      $response->{log} = "Fatal:Gearman:worker Processing failed silently" unless defined $response->{log};
+      $response->{status} = -4 unless defined $response->{status}; # TODO: Fatal?
       $job->complete(encode_json($response)); }
     else {
       $job->complete($response); }
