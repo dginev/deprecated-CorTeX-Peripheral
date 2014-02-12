@@ -1,7 +1,7 @@
 #!/usr/bin/env perl
 # /=====================================================================\ #
 # |  CorTeX Framework                                                   | #
-# | A Generic Worker for Gearman                                        | #
+# | Status report for CorTeX worker machines                            | #
 # |=====================================================================| #
 # | Part of the LaMaPUn project: https://trac.kwarc.info/lamapun/       | #
 # |  Research software, produced as part of work done by:               | #
@@ -22,7 +22,7 @@ my $hostname = `hostname`;
 chomp($hostname);
 if ($hostname eq 'master') {
   # We're on HULK, get the revision report from a level down:
-  $report = decode_json(`ssh node100 ~/CorTeX-Peripheral/bin/cortex-status` ||'');
+  $report = decode_json(`ssh node100 '~/CorTeX-Peripheral/bin/cortex-status'` ||'');
   # And grep through qstat to monitor our processes:
   my $process_report = `qstat | grep cortex-worker`;
   # TODO: Finish this, it will only be empty for now;
