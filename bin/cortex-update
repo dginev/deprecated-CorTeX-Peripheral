@@ -33,7 +33,7 @@ else {
       my $pid = $cortex_spawner->[0];
       my $args = $cortex_spawner->[1];
       # Restart the spawner so that it picks up new definitions:
-      if (kill 'KILL', $pid) {
+      if (kill 'INT', $pid) {
         $report .= `nohup perl ~/CorTeX-Peripheral/bin/cortex-spawner $args &`;
       }
     }
