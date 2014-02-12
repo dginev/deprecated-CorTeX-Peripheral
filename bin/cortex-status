@@ -24,10 +24,8 @@ if ($hostname eq 'master') {
   # We're on HULK, get the revision report from a level down:
   $report = decode_json(`ssh node100 '~/CorTeX-Peripheral/bin/cortex-status'` ||'');
   # And grep through qstat to monitor our processes:
-  my $process_report = `qstat | grep cortex-worker`;
-  # TODO: Finish this, it will only be empty for now;
-  $report->{worker_processes} = 0;
-  $report->{machine_cpus} = 'HULK SMASH'; }
+  $report->{worker_processes} = `qstat | grep cortex | wc -l`;
+  $report->{machine_cpus} = '~600'; }
 else {
   # We want to know revisions of:
   # 1. CorTeX-Peripheral
