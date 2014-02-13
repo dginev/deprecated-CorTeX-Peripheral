@@ -19,7 +19,6 @@ use Data::Dumper;
 
 use AnyEvent::Gearman;
 use JSON::XS qw(decode_json encode_json);
-use Net::Address::IP::Local;
 
 use FindBin;
 my ($RealBin_safe,$libdir);
@@ -44,14 +43,14 @@ my $timeout_limit = 600; # If worker isn't done in 10 minutes - timeout
 setpriority(0, $$, 20);
 
 my ($s,@servers) = @ARGV;
-my $identity = Net::Address::IP::Local->public;
+my $identity = `hostname`;;
 
 # Restart support for keeping the worker operational over long inactivity periods
 sub restart_worker {
   my ($reason) = @_;
-  print STDERR "$reason reached, restarting worker $$ for $s\n";
+  print STDERR "[".localtime()."]$reason reached, restarting worker $$ for $s\n";
   exec("$RealBin_safe/cortex-worker",$s,@servers)
-    or die("Fatal:cortex-worker:restart Worker $$ autoflush Failed!"); }
+    or die("Fatal:cortex-worker:restart [$identity] Worker $$ autoflush Failed!"); }
 # CorTeX workhorses have lowest priority, to avoid overloading the machine
 
 my $worker = gearman_worker(@servers);
@@ -60,7 +59,7 @@ my $eval_return = eval {require "CorTeX/Service/$s.pm"; 1; };
 if ($eval_return && (!$@)) {
   $service = eval { "CorTeX::Service::$s"->new(); }; }
 else {
-  print STDERR "Service $s not available, exiting.\n$@\n";
+  print STDERR "[".localtime()."]Service $s not available, exiting.\n$@\n";
   exit; }
 my $job_limit = $service->job_limit();          
 my $jobs = 0;
@@ -71,14 +70,14 @@ $worker->register_function(
     undef $inactivity_timeout; # Reset inactivity timer, we're processing a job.
     $job_timeout = AnyEvent->timer(after => $timeout_limit, cb => sub { # Set job timer
       # When we timeout, fail this job and restart the worker
-      $job->fail('Fatal:cortex-worker:timeout Worker timed out after $timeout_limit seconds.');
+      $job->fail('Fatal:cortex-worker:timeout [$identity] Worker timed out after $timeout_limit seconds.');
       restart_worker('Timeout');
     });   
     print STDERR "[".localtime()."] Job received by worker $$\n";
     my $response = $service->process($job->workload);
     $response = {} unless defined $response;
     if (ref($response) eq 'HASH') {
-      $response->{log} = "Fatal:Gearman:worker Processing failed silently" unless defined $response->{log};
+      $response->{log} = "Fatal:Gearman:worker [$identity] Processing failed silently" unless defined $response->{log};
       $response->{status} = -4 unless defined $response->{status}; # TODO: Fatal?
       $job->complete(encode_json($response)); }
     else {
@@ -93,7 +92,7 @@ $worker->register_function(
       restart_worker('Inactivity Timeout'); });   
   }
 );
-print STDERR "Started Worker $$ for $s\n";
+print STDERR "[".localtime()."] Started Worker $$ for $s\n";
 
 # Non-busy daemon
 while(1) {
