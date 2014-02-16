@@ -48,7 +48,7 @@ my $identity = `hostname`;;
 # Restart support for keeping the worker operational over long inactivity periods
 sub restart_worker {
   my ($reason) = @_;
-  print STDERR "[".localtime()."]$reason reached, restarting worker $$ for $s\n";
+  print STDERR "[".localtime()."] [$$] $reason reached, restarting\n";
   exec("$RealBin_safe/cortex-worker",$s,@servers)
     or die("Fatal:cortex-worker:restart [$identity] Worker $$ autoflush Failed!"); }
 # CorTeX workhorses have lowest priority, to avoid overloading the machine
@@ -59,21 +59,24 @@ my $eval_return = eval {require "CorTeX/Service/$s.pm"; 1; };
 if ($eval_return && (!$@)) {
   $service = eval { "CorTeX::Service::$s"->new(); }; }
 else {
-  print STDERR "[".localtime()."]Service $s not available, exiting.\n$@\n";
+  print STDERR "[".localtime()."] Service $s not available, exiting.\n$@\n";
   exit; }
 my $job_limit = $service->job_limit();          
 my $jobs = 0;
-my ($job_timeout,$inactivity_timeout);
+my $job_timeout;
+my $loop_cv;
+my $wait_daemon;
+
 $worker->register_function(
   $s => sub {
     my $job = shift;
-    undef $inactivity_timeout; # Reset inactivity timer, we're processing a job.
+    $loop_cv->send; # Reset inactivity timer, we're processing a job.
     $job_timeout = AnyEvent->timer(after => $timeout_limit, cb => sub { # Set job timer
       # When we timeout, fail this job and restart the worker
       $job->fail('Fatal:cortex-worker:timeout [$identity] Worker timed out after $timeout_limit seconds.');
-      restart_worker('Timeout');
+      restart_worker('Job Timeout');
     });   
-    print STDERR "[".localtime()."] Job received by worker $$\n";
+    print STDERR "[".localtime()."] [$$] Job received \n";
     my $response = $service->process($job->workload);
     $response = {} unless defined $response;
     if (ref($response) eq 'HASH') {
@@ -82,21 +85,18 @@ $worker->register_function(
       $job->complete(encode_json($response)); }
     else {
       $job->complete($response); }
-    print STDERR "[".localtime()."] Job completed by worker $$\n";
+    print STDERR "[".localtime()."] [$$] Job completed \n";
     if ($job_limit) {
       $jobs++;
       restart_worker('Job limit') if ($jobs > $job_limit); }
     undef $job_timeout; # Reset job timer
-    # Restart after a minute of inactivity
-    $inactivity_timeout = AnyEvent->timer(after => 60, cb => sub { 
-      restart_worker('Inactivity Timeout'); });   
   }
 );
-print STDERR "[".localtime()."] Started Worker $$ for $s\n";
+print STDERR "[".localtime()."] [$$] Started Worker for $s\n";
 
 # Non-busy daemon
 while(1) {
- my $loop_cv = AnyEvent->condvar;
- my $wait_daemon = AnyEvent->timer(after => 60, cb => sub { $loop_cv->send });
- $loop_cv->recv;
-}
+  $loop_cv = AnyEvent->condvar;
+  undef $wait_daemon;
+  $wait_daemon = AnyEvent->timer(after => $timeout_limit, cb => sub {restart_worker('Inactivity Timeout'); });     
+  $loop_cv->recv; }
