@@ -25,8 +25,11 @@ sub type {'conversion'}
 
 sub convert {
   my ($self,$workload) = @_;
-  my $options = decode_json($workload);
-  my $source = "literal:".$options->{workload};
+  my $options = $workload && eval{decode_json($workload);};
+  my $document = $options && (ref $options) && $options->{document};
+  return {status=>-4,log=>"Fatal:workload:empty No workload provided on input"}
+    unless ($document && (length($document)>0));
+  my $source = "literal:".$document;
   my $converter = LaTeXML->get_converter($config);
   $converter->prepare_session($config);
   my $response = $converter->convert($source);
