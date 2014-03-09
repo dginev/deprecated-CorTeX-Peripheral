@@ -34,12 +34,17 @@ void *process_document(gearman_job_st *job, void *data, size_t *size, gearman_re
   // Read in a workload from Gearman:
 	size_t workload_size = gearman_job_workload_size(job);
   void* workload = gearman_job_take_workload(job,&workload_size);
-  
+  json_object * json_workload = json_tokener_parse((char*)workload);
+  json_object * json_document = json_object_object_get(json_workload,"document");
+  char *document_string = json_object_get_string(json_document);
+  int document_size = 0;
+  document_size = strlen(document_string);
   // Parse it in LibXML and XPath all words:
   /* Init libxml */     
   xmlInitParser();
   xmlDocPtr doc;
-  doc = xmlReadMemory(workload, workload_size, "anonymous.xml", NULL, 0);
+  // TODO: Maybe also record entry name from the workload instead of anonymous.xml?
+  doc = xmlReadMemory(document_string, document_size, "anonymous.xml", NULL, 0);
   if (doc == NULL) {
       fprintf(stderr, "Failed to parse workload!\n");
       *ret=GEARMAN_WORK_FAIL;
@@ -96,36 +101,33 @@ int main(int args,char* argv[]) {
 
 
 
-struct word_hash_element {
-      const char *word; /* we'll use this field as the key */
+struct word_count_element {
+      char *word; /* we'll use this field as the key */
       int count;             
       UT_hash_handle hh; /* makes this structure hashable */
 };
+struct TF_element {
+      char *word; /* we'll use this field as the key */
+      double TF;
+      UT_hash_handle hh_TF; /* makes this structure hashable */
+};
 
-void record_word(struct word_hash_element *hash, const char *word) {
-    struct word_hash_element *w;
-    HASH_FIND_STR(hash, word, w);  /* word already in the hash? */
-    if (w==NULL) {
-      w = (struct word_hash_element*)malloc(sizeof(struct word_hash_element));
-      w->word = word;
+void record_word(struct word_count_element **hash, char *word) {
+    struct word_count_element *w;
+    HASH_FIND_STR(*hash, word, w);  /* word already in the hash? */
+    if (w==NULL) { // New word
+      w = (struct word_count_element*)malloc(sizeof(struct word_count_element));
+      w->word = strdup(word);
       w->count = 1;
-      HASH_ADD_KEYPTR( hh, hash, w->word, strlen(w->word), w ); }
-    else {
-      // Already exists, just increment the counter:
+      HASH_ADD_KEYPTR( hh, *hash, w->word, strlen(w->word), w ); }
+    else { // Already exists, just increment the counter:
       w->count++; } }
 
-
-/**
- * print_xpath_nodes:
- * @nodes:    the nodes set.
- * @output:   the output file handle.
- *
- * Prints the @nodes content to @output.
- */
 void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes, FILE* output) {
 
   // Prepare counts hash
-  struct word_hash_element *w, *tmp, *word_counts = NULL;
+  struct word_count_element *w, *tmp, *word_counts = NULL;
+  struct TF_element *w_TF, *TF = NULL;
 
   xmlNodePtr cur;
   int size;
@@ -137,19 +139,31 @@ void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes, FILE* output) {
     if (nodes->nodeTab[i]->type == XML_ELEMENT_NODE) {
       cur = nodes->nodeTab[i];        
       xmlChar *word = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-      fprintf(stderr,"word: %s\n", word);
-      record_word(word_counts, (const char*)word);
+      record_word(&word_counts, (char*)word);
       xmlFree(word);
     }
   }
 
-  /* free the hash table contents */
-  HASH_ITER(hh, word_counts, w, tmp) {
-    fprintf(stderr, "are we iterating?\n");
-    fprintf(stderr,"word_counts{%s} = %d\n", w->word, w->count);
+  // TODO: Discard stopwords
+  double max_count = 0; // double so that we force real division
+  for(w=word_counts; w != NULL; w=w->hh.next) {
+    int current_count = w->count;
+    if (max_count < current_count) { max_count = current_count; } }
+  fprintf(stderr, "\nMax count: %d\n\n", (int)max_count);
+
+  for(w=word_counts; w != NULL; w=w->hh.next) {
+    double current_tf = w->count / max_count;
+    w_TF = (struct TF_element*)malloc(sizeof(struct TF_element));
+    w_TF->word = strdup(w->word);
+    w_TF->TF = current_tf;
+    HASH_ADD_KEYPTR( hh_TF, TF, w_TF->word, strlen(w_TF->word), w_TF );
+    /* free the hash table contents */
     HASH_DEL(word_counts, w);
     free(w);
   }
+
+  for(w_TF=TF; w_TF != NULL; w_TF=w_TF->hh_TF.next) {
+    fprintf(stderr,"%s : TF(%f)\n", w_TF->word, w_TF->TF); }
 }
 
 char* jsonify(char *annotations, char *message, int status, size_t *size) {
