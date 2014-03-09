@@ -25,11 +25,15 @@ sub type {'analysis'}
 
 sub analyze {
   my ($self,$workload) = @_;
-  my $options = decode_json($workload);
+  my $options = $workload && eval {decode_json($workload);};
   my $status = -4; # Fatal unless we succeed
   my $log; # TODO: Any messages?
-  my $document = $options->{workload};
+  my $document = $options && (ref $options) && $options->{document};
+  return {status=>-4,log=>"Fatal:workload:empty No workload provided on input"}
+    unless ($document && (length($document)>0));
   my $entry = $options->{entry};
+  return {status=>-4,log=>"Fatal:entry:empty No entry provided on input"}
+    unless ($entry && (length($entry)>0));
   # Prepare an XML parser
   my $parser=XML::LibXML->new();
   $parser->load_ext_dtd(0);

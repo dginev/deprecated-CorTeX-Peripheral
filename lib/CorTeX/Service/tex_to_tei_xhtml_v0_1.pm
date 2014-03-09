@@ -15,6 +15,7 @@ package CorTeX::Service::tex_to_tei_xhtml_v0_1;
 use warnings;
 use strict;
 use Scalar::Util qw/blessed/;
+use JSON::XS qw(encode_json decode_json);
 use base qw(CorTeX::Service);
 use LaTeXML;
 use LaTeXML::Common::Config;
@@ -32,9 +33,11 @@ sub type {'conversion'}
 sub convert {
   my ($self,$workload) = @_;
   # I. Convert to XML
+  $workload = $workload && eval {decode_json($workload)};
+  my $document = $workload && (ref $workload) && $workload->{document};
   return {status=>-4,log=>"Fatal:workload:empty No workload provided on input"}
-    unless ($workload && (length($workload)>0));
-  my $source = "literal:".$workload;
+    unless ($document && (length($document)>0));
+  my $source = "literal:".$document;
   my $converter = LaTeXML->get_converter($opts);
   $converter->prepare_session($opts);
   my $response = $converter->convert($source);
