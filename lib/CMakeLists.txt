@@ -8,7 +8,8 @@ find_library(uthash uthash)
 FIND_PACKAGE(LibXml2 REQUIRED)
 include_directories(${LIBXML2_INCLUDE_DIR})
 
-message(STATUS ${LIBXML2_INCLUDE_DIR})
+ADD_DEFINITIONS(
+    -std=c99)
 
 add_executable(idf_v0_1.out idf_v0_1.c)
 target_link_libraries(idf_v0_1.out ${LIBJSON} ${LIBGEARMAN} ${uthash_LIBRARIES} ${LIBXML2_LIBRARIES})

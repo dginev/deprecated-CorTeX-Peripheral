@@ -8,6 +8,7 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <locale.h>
 // TODO: Do we really need assertions?
 #include <assert.h>
 // Hashes
@@ -26,6 +27,40 @@ void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes, FILE* output);
 void *process_document(gearman_job_st *job, void *data, size_t *size, gearman_return_t *ret);
 char *jsonify(char *annotations, char *message, int status, size_t *size);
 
+struct stopword_element {
+  char *word; /* we'll use this field as the key */
+  bool stopper;             
+  UT_hash_handle hh; /* makes this structure hashable */
+};
+struct stopword_element *stopwords = NULL;
+
+int main(int args,char* argv[]) {
+
+  /* Read in the list of stopwords as a hash */
+  json_object *stopwords_json = json_object_from_file("stopwords.json");
+  int stopwords_count = json_object_array_length(stopwords_json);
+  struct stopword_element *sw;
+  int i;
+  for (i=0; i< stopwords_count; i++){
+    json_object *word_json = json_object_array_get_idx(stopwords_json, i); /*Getting the array element at position i*/
+    char *stopword = json_object_get_string(word_json);
+    sw = (struct stopword_element*)malloc(sizeof(struct stopword_element));
+    sw->word = strdup(stopword);
+    sw->stopper = true;
+    HASH_ADD_KEYPTR( hh, stopwords, sw->word, strlen(sw->word), sw ); }
+
+  // Then prepare a Gearman session
+  gearman_worker_st worker;
+  gearman_worker_create(&worker);
+  gearman_worker_add_server(&worker, "127.0.0.1", 4730);
+  gearman_worker_add_function(&worker, "idf_v0_1", 120, process_document, NULL);
+
+  // while(1) 
+  gearman_worker_work(&worker);
+  gearman_worker_free(&worker);
+  return 0; }
+
+/* Main document processing procedure */
 void *process_document(gearman_job_st *job, void *data, size_t *size, gearman_return_t *ret)
 {
   // Prepare result
@@ -88,18 +123,6 @@ void *process_document(gearman_job_st *job, void *data, size_t *size, gearman_re
   strcpy(message,"work completed");
   return jsonify("",message,-1,size); }
 
-int main(int args,char* argv[]) {
-  gearman_worker_st worker;
-  gearman_worker_create(&worker);
-  gearman_worker_add_server(&worker, "127.0.0.1", 4730);
-  gearman_worker_add_function(&worker, "idf_v0_1", 120, process_document, NULL);
-
-  // while(1) 
-  gearman_worker_work(&worker);
-  gearman_worker_free(&worker);
-  return 0; }
-
-
 
 struct word_count_element {
       char *word; /* we'll use this field as the key */
@@ -109,7 +132,7 @@ struct word_count_element {
 struct TF_element {
       char *word; /* we'll use this field as the key */
       double TF;
-      UT_hash_handle hh_TF; /* makes this structure hashable */
+      UT_hash_handle hh; /* makes this structure hashable */
 };
 
 void record_word(struct word_count_element **hash, char *word) {
@@ -139,7 +162,9 @@ void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes, FILE* output) {
     if (nodes->nodeTab[i]->type == XML_ELEMENT_NODE) {
       cur = nodes->nodeTab[i];        
       xmlChar *word = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
-      record_word(&word_counts, (char*)word);
+      HASH_FIND_STR(stopwords, (char*) word, w);  /* word already in the hash? */
+      if (w==NULL) { // Skip stop words
+        record_word(&word_counts, (char*)word); }
       xmlFree(word);
     }
   }
@@ -156,16 +181,18 @@ void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes, FILE* output) {
     w_TF = (struct TF_element*)malloc(sizeof(struct TF_element));
     w_TF->word = strdup(w->word);
     w_TF->TF = current_tf;
-    HASH_ADD_KEYPTR( hh_TF, TF, w_TF->word, strlen(w_TF->word), w_TF );
+    HASH_ADD_KEYPTR( hh, TF, w_TF->word, strlen(w_TF->word), w_TF );
     /* free the hash table contents */
     HASH_DEL(word_counts, w);
     free(w);
   }
 
-  for(w_TF=TF; w_TF != NULL; w_TF=w_TF->hh_TF.next) {
+  HASH_SORT(TF, id_sort);
+  for(w_TF=TF; w_TF != NULL; w_TF=w_TF->hh.next) {
     fprintf(stderr,"%s : TF(%f)\n", w_TF->word, w_TF->TF); }
 }
 
+/* Temporary place for utility functions: */
 char* jsonify(char *annotations, char *message, int status, size_t *size) {
   json_object *response = json_object_new_object();
   json_object *json_log = json_object_new_string(message);
@@ -178,3 +205,13 @@ char* jsonify(char *annotations, char *message, int status, size_t *size) {
   const char* string_response = json_object_to_json_string(response);
   *size = strlen(string_response);
   return string_response; }
+
+
+int id_sort(struct TF_element *a, struct TF_element *b) {
+  double a_TF = a->TF;
+  double b_TF = b->TF;
+  if (a_TF < b_TF)  {return (int) 1; }
+  if (a_TF > b_TF)  {return (int) -1;  }
+  if (a_TF == b_TF) {return (int) 0;  }
+}
+
