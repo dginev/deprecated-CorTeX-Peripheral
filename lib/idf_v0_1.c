@@ -159,7 +159,8 @@ void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes, FILE* output) {
     if (nodes->nodeTab[i]->type == XML_ELEMENT_NODE) {
       xmlChar *word = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
       if (word == NULL) {continue;}
-      for(char *p = word;*p;++p) *p=*p>='A'&&*p<='Z'?*p|0x60:*p; /* Normalization: lowercase the ASCII letters */
+      char *p;
+      for(p = word;*p;++p) *p=*p>='A'&&*p<='Z'?*p|0x60:*p; /* Normalization: lowercase the ASCII letters */
       HASH_FIND_STR(stopwords, (char*) word, w);  /* word already in the hash? */
       if (w==NULL) { // Skip stop words
         record_word(&word_counts, (char*)word); }
