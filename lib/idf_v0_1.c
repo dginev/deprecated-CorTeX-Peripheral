@@ -70,8 +70,7 @@ void *process_document(gearman_job_st *job, void *data, size_t *size, gearman_re
   json_object * json_document = json_object_object_get(json_workload,"document");
   char *document_string = json_object_get_string(json_document);
   int document_size = 0;
-  if (document_string != NULL) { fprintf(stderr, "not null\n" ); document_size = strlen(document_string); }
-  return;
+  if (document_string != NULL) { document_size = strlen(document_string); }
   // Parse it in LibXML and XPath all words:
   /* Init libxml */     
   xmlInitParser();
@@ -83,7 +82,6 @@ void *process_document(gearman_job_st *job, void *data, size_t *size, gearman_re
       *ret=GEARMAN_WORK_FAIL;
       strcpy(message,"Fatal:LibXML:parse Failed to parse workload.");
       return jsonify("",message,-4,size); }
-
   xmlXPathContextPtr xpath_context; 
   xmlNodeSetPtr nodeset;
   xmlXPathObjectPtr xpath_result;
@@ -156,10 +154,12 @@ void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes, FILE* output) {
   assert(output);
   size = (nodes) ? nodes->nodeNr : 0;
   for(i = 0; i < size; ++i) {
-    assert(nodes->nodeTab[i]);
+    cur = nodes->nodeTab[i];
+    if (cur == NULL) {continue;}
     if (nodes->nodeTab[i]->type == XML_ELEMENT_NODE) {
-      cur = nodes->nodeTab[i];        
       xmlChar *word = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
+      if (word == NULL) {continue;}
+      for(char *p = word;*p;++p) *p=*p>='A'&&*p<='Z'?*p|0x60:*p; /* Normalization: lowercase the ASCII letters */
       HASH_FIND_STR(stopwords, (char*) word, w);  /* word already in the hash? */
       if (w==NULL) { // Skip stop words
         record_word(&word_counts, (char*)word); }
