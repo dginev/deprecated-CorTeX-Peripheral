@@ -8,7 +8,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
-#include <locale.h>
 // TODO: Do we really need assertions?
 #include <assert.h>
 // Hashes
@@ -54,7 +53,6 @@ int main(int args,char* argv[]) {
   gearman_worker_create(&worker);
   gearman_worker_add_server(&worker, "127.0.0.1", 4730);
   gearman_worker_add_function(&worker, "idf_v0_1", 120, process_document, NULL);
-
   // while(1) 
   gearman_worker_work(&worker);
   gearman_worker_free(&worker);
@@ -65,7 +63,6 @@ void *process_document(gearman_job_st *job, void *data, size_t *size, gearman_re
 {
   // Prepare result
   char *message=(char*)calloc(100,sizeof(char));
-
   // Read in a workload from Gearman:
 	size_t workload_size = gearman_job_workload_size(job);
   void* workload = gearman_job_take_workload(job,&workload_size);
@@ -73,7 +70,8 @@ void *process_document(gearman_job_st *job, void *data, size_t *size, gearman_re
   json_object * json_document = json_object_object_get(json_workload,"document");
   char *document_string = json_object_get_string(json_document);
   int document_size = 0;
-  document_size = strlen(document_string);
+  if (document_string != NULL) { fprintf(stderr, "not null\n" ); document_size = strlen(document_string); }
+  return;
   // Parse it in LibXML and XPath all words:
   /* Init libxml */     
   xmlInitParser();
