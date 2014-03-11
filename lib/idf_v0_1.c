@@ -43,7 +43,7 @@ int main(int args,char* argv[]) {
   int i;
   for (i=0; i< stopwords_count; i++){
     json_object *word_json = json_object_array_get_idx(stopwords_json, i); /*Getting the array element at position i*/
-    char *stopword = json_object_get_string(word_json);
+    const char *stopword = json_object_get_string(word_json);
     sw = (struct stopword_element*)malloc(sizeof(struct stopword_element));
     sw->word = strdup(stopword);
     sw->stopper = true;
@@ -71,7 +71,7 @@ void *process_document(gearman_job_st *job, void *data, size_t *size, gearman_re
   void* workload = gearman_job_take_workload(job,&workload_size);
   json_object * json_workload = json_tokener_parse((char*)workload);
   json_object * json_document = json_object_object_get(json_workload,"document");
-  char *document_string = json_object_get_string(json_document);
+  const char *document_string = json_object_get_string(json_document);
   int document_size = 0;
   document_size = strlen(document_string);
   // Parse it in LibXML and XPath all words:
@@ -204,7 +204,7 @@ char* jsonify(char *annotations, char *message, int status, size_t *size) {
   json_object_object_add(response,"status", json_status);
   const char* string_response = json_object_to_json_string(response);
   *size = strlen(string_response);
-  return string_response; }
+  return (char *)string_response; }
 
 
 int id_sort(struct TF_element *a, struct TF_element *b) {
