@@ -20,11 +20,11 @@ add_library(IDF_Score lib/idf_score.c)
 FIND_PACKAGE(LibXml2 REQUIRED)
 include_directories(${LIBXML2_INCLUDE_DIR})
 
-add_executable(cortex_worker.o lib/cortex_worker.c)
-target_link_libraries(cortex_worker.o IDF_Score ${LIBJSON} ${LIBGEARMAN} ${uthash_LIBRARIES} ${LIBXML2_LIBRARIES})
+add_executable(cortex_worker lib/cortex_worker.c)
+target_link_libraries(cortex_worker IDF_Score ${LIBJSON} ${LIBGEARMAN} ${uthash_LIBRARIES} ${LIBXML2_LIBRARIES})
 
 set (EXTRA_LIBS ${EXTRA_LIBS} IDF_Score)
 
 # Output executables at the root of build tree
-SET_PROPERTY( TARGET cortex_worker.o
+SET_PROPERTY( TARGET cortex_worker
         PROPERTY RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/bin )
