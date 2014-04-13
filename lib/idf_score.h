@@ -1,3 +1,8 @@
+#include <libxml/tree.h>
+#include <libxml/parser.h>
+#include <libxml/xpath.h>
+#include <libxml/xpathInternals.h>
+
 struct stopword_element {
   char *word; /* we'll use this field as the key */
   bool stopper;             
