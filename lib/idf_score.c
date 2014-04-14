@@ -116,7 +116,7 @@ void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes) {
     if (nodes->nodeTab[i]->type == XML_ELEMENT_NODE) {
       xmlChar *word = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
       if (word == NULL) {continue;}
-      char *p;
+      xmlChar *p;
       for(p = word;*p;++p) *p=tolower(*p); /* Normalization: lowercase the ASCII letters */
       HASH_FIND_STR(stopwords, (char*) word, w);  /* word already in the hash? */
       if (w==NULL) { // Skip stop words
