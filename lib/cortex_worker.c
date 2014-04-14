@@ -10,12 +10,14 @@
 #include <libgearman/gearman.h>
 // Self
 #include "cortex_worker.h"
+#include "cortex_utils.h"
 // Services:
 // #include<cortex/myservice.h>
 #include "idf_score.h"
 
 /* Usually you would define your services in separate libraries that you import via #includes */
 json_object* cortex_example_service (json_object* workload) {
+  json_object_object_get(workload,"document");
   printf("Hello from the example CorTeX service!\n");
   return cortex_response_json("","Example service successfully ended",-1); }
 struct service_registration* cortex_services;
@@ -88,20 +90,3 @@ void *cortex_process_document(gearman_job_st *job, void *context, size_t *size, 
   // Return to Gearman:
   *ret=GEARMAN_SUCCESS;
   return cortex_stringify_response(json_response,size); }
-
-/* Temporary place for utility functions: */
-char* cortex_stringify_response(json_object* response, size_t *size) {
-  const char* string_response = json_object_to_json_string(response);
-  *size = strlen(string_response);
-  return (char *)string_response; }
-
-json_object* cortex_response_json(char *annotations, char *message, int status) {
-  json_object *response = json_object_new_object();
-  json_object *json_log = json_object_new_string(message);
-  json_object *json_status = json_object_new_int(status);
-  json_object *json_annotations = json_object_new_string(annotations);
-
-  json_object_object_add(response,"annotations", json_annotations);
-  json_object_object_add(response,"log", json_log);
-  json_object_object_add(response,"status", json_status);
-  return response; }

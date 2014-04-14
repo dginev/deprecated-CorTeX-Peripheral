@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdbool.h>
+#include <ctype.h>
 // Hashes
 #include <uthash.h>
 // JSON
@@ -14,12 +15,13 @@
 #include <libxml/xpathInternals.h>
 // Self
 #include "idf_score.h"
+#include "cortex_utils.h"
 
 
 json_object* compute_idf_score(json_object* json_workload) {
   json_object * json_document = json_object_object_get(json_workload,"document");
   const char *document_string = json_object_get_string(json_document);
-  char* log_message;
+  char* log_message="";
   int document_size = 0;
   if (document_string != NULL) { document_size = strlen(document_string); }
   // Parse it in LibXML and XPath all words:
@@ -30,16 +32,15 @@ json_object* compute_idf_score(json_object* json_workload) {
   doc = xmlReadMemory(document_string, document_size, "anonymous.xml", NULL, 0);
   if (doc == NULL) {
       fprintf(stderr, "Failed to parse workload!\n");
-      strcpy(log_message,"Fatal:LibXML:parse Failed to parse workload.");
+      log_message = "Fatal:LibXML:parse Failed to parse workload.";
       return cortex_response_json("",log_message,-4); }
   xmlXPathContextPtr xpath_context; 
-  xmlNodeSetPtr nodeset;
   xmlXPathObjectPtr xpath_result;
   xpath_context = xmlXPathNewContext(doc);
   if(xpath_context == NULL) {
       fprintf(stderr,"Error: unable to create new XPath context\n");
       xmlFreeDoc(doc); 
-      strcpy(log_message,"Fatal:LibXML:XPath unable to create new XPath context\n");
+      log_message = "Fatal:LibXML:XPath unable to create new XPath context\n";
       return cortex_response_json("",log_message,-4); }
 
   /* Register XHTML namespace */
@@ -52,7 +53,7 @@ json_object* compute_idf_score(json_object* json_workload) {
       fprintf(stderr,"Error: unable to evaluate xpath expression \"%s\"\n", xpath);
       xmlXPathFreeContext(xpath_context); 
       xmlFreeDoc(doc); 
-      strcpy(log_message,"Fatal:LibXML:XPath unable to evaluate xpath expression\n");
+      log_message = "Fatal:LibXML:XPath unable to evaluate xpath expression\n";
       return cortex_response_json("",log_message,-4); }
 
   /* Print results */
@@ -64,6 +65,7 @@ json_object* compute_idf_score(json_object* json_workload) {
   xmlFreeDoc(doc); 
   /* Shutdown libxml */
   xmlCleanupParser();
+  return cortex_response_json("",log_message,-1); //TODO
 }
 
 
@@ -93,15 +95,15 @@ int ascending_numeric_sort(struct term_frequency_element *a, struct term_frequen
   double a_TF = a->TF;
   double b_TF = b->TF;
   if (a_TF < b_TF)  {return (int) 1; }
-  if (a_TF > b_TF)  {return (int) -1;  }
-  if (a_TF == b_TF) {return (int) 0;  }
+  else if (a_TF > b_TF)  {return (int) -1;  }
+  else { return (int) 0;  }
 }
 
 /* Core analysis algorithm: */
 void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes) {
 
   // Prepare counts hash
-  struct word_count_element *w, *tmp, *word_counts = NULL;
+  struct word_count_element *w, *word_counts = NULL;
   struct term_frequency_element *w_TF, *TF = NULL;
 
   xmlNodePtr cur;
@@ -115,7 +117,7 @@ void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes) {
       xmlChar *word = xmlNodeListGetString(doc, cur->xmlChildrenNode, 1);
       if (word == NULL) {continue;}
       char *p;
-      for(p = word;*p;++p) *p=*p>='A'&&*p<='Z'?*p|0x60:*p; /* Normalization: lowercase the ASCII letters */
+      for(p = word;*p;++p) *p=tolower(*p); /* Normalization: lowercase the ASCII letters */
       HASH_FIND_STR(stopwords, (char*) word, w);  /* word already in the hash? */
       if (w==NULL) { // Skip stop words
         record_word(&word_counts, (char*)word); }
