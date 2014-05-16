@@ -15,7 +15,6 @@
 use strict;
 use warnings;
 use Encode;
-use Data::Dumper;
 
 use AnyEvent::Gearman;
 use JSON::XS qw(decode_json encode_json);
@@ -40,18 +39,11 @@ $SIG{'TERM'} = \&stop_immediate; # TERM handler
 sub stop_immediate { exit 0; }
 my $timeout_limit = 600; # If worker isn't done in 10 minutes - timeout
 
+# CorTeX workhorses have lowest priority, to avoid overloading the machine
 setpriority(0, $$, 20);
 
 my ($s,@servers) = @ARGV;
 my $identity = `hostname`;;
-
-# Restart support for keeping the worker operational over long inactivity periods
-sub restart_worker {
-  my ($reason) = @_;
-  print STDERR "[".localtime()."] [$$] $reason reached, restarting\n";
-  exec("$RealBin_safe/cortex-worker",$s,@servers)
-    or die("Fatal:cortex-worker:restart [$identity] Worker $$ autoflush Failed!"); }
-# CorTeX workhorses have lowest priority, to avoid overloading the machine
 
 my $worker = gearman_worker(@servers);
 my $service;
@@ -100,3 +92,11 @@ while(1) {
   undef $wait_daemon;
   $wait_daemon = AnyEvent->timer(after => $timeout_limit, cb => sub {restart_worker('Inactivity Timeout'); });     
   $loop_cv->recv; }
+
+# -- Utilities:
+# Restart support for keeping the worker operational over long inactivity periods
+sub restart_worker {
+  my ($reason) = @_;
+  print STDERR "[".localtime()."] [$$] $reason reached, restarting\n";
+  exec("$RealBin_safe/cortex-worker",$s,@servers)
+    or die("Fatal:cortex-worker:restart [$identity] Worker $$ autoflush Failed!"); }
