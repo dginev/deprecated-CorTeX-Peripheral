@@ -26,10 +26,10 @@ sub type {'conversion'}
 sub convert {
   my ($self,$workload) = @_;
   my $options = $workload && eval{decode_json($workload);};
-  my $document = $options && (ref $options) && $options->{document};
+  my $source = $options && (ref $options) && $options->{document};
   return {status=>-4,log=>"Fatal:workload:empty No workload provided on input"}
-    unless ($document && (length($document)>0));
-  my $source = "literal:".$document;
+    unless ($source && (length($source)>0));
+  $source = "literal:".$source;
   my $converter = LaTeXML->get_converter($config);
   $converter->prepare_session($config);
   my $response = $converter->convert($source);
