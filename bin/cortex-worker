@@ -41,9 +41,10 @@ my $timeout_limit = 600; # If worker isn't done in 10 minutes - timeout
 
 # CorTeX workhorses have lowest priority, to avoid overloading the machine
 setpriority(0, $$, 20);
+setpgrp(0,0);
 
 my ($s,@servers) = @ARGV;
-my $identity = `hostname`;;
+my $identity = `hostname`;
 
 my $worker = gearman_worker(@servers);
 my $service;
@@ -62,8 +63,9 @@ my $wait_daemon;
 $worker->register_function(
   $s => sub {
     my $job = shift;
+    my $timer_pid = with_external_timer($job,$timeout_limit); # External timer to prevent problems in system calls
     $loop_cv->send; # Reset inactivity timer, we're processing a job.
-    $job_timeout = AnyEvent->timer(after => $timeout_limit, cb => sub { # Set job timer
+    $job_timeout = AnyEvent->timer(after => ($timeout_limit-2), cb => sub { # Set job timer
       # When we timeout, fail this job and restart the worker
       $job->fail('Fatal:cortex-worker:timeout [$identity] Worker timed out after $timeout_limit seconds.');
       restart_worker('Job Timeout');
@@ -82,6 +84,7 @@ $worker->register_function(
       $jobs++;
       restart_worker('Job limit') if ($jobs > $job_limit); }
     undef $job_timeout; # Reset job timer
+    reset_external_timer($timer_pid); # Reset external timer
   }
 );
 print STDERR "[".localtime()."] [$$] Started Worker for $s\n";
@@ -100,3 +103,26 @@ sub restart_worker {
   print STDERR "[".localtime()."] [$$] $reason reached, restarting\n";
   exec("$RealBin_safe/cortex-worker",$s,@servers)
     or die("Fatal:cortex-worker:restart [$identity] Worker $$ autoflush Failed!"); }
+
+sub with_external_timer {
+  my ($job,$timeout_limit) = @_;
+  my $parent = $$;
+  my $pid = fork();
+  return $pid if $pid; # If parent finishes normally, it will kill $pid
+  undef $wait_daemon;
+  undef $job_timeout;
+  sleep $timeout_limit; # Sleep for the timeout
+
+  # Core timeout handler:
+  # If we haven't been killed, there is a system call timeout => kill the parent
+  print STDERR "[".localtime()."] [$$] Killing $parent via external timeout\n";
+  # Record the failure:
+  $job->fail('Fatal:cortex-worker:timeout [$identity] Worker timed out after $timeout_limit seconds.');
+  kill 9, -$parent; # We really need 9 here, the "gs" infinite loop from LaTeXML can't be killed in any other way
+  # And exit;
+  exit 0; }
+
+sub reset_external_timer {
+  my ($pid) = @_;
+  kill 9, $pid;
+  return; }
