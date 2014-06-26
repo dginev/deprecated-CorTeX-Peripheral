@@ -8,7 +8,7 @@
 #include <uthash.h>
 // JSON
 #include <json-c/json.h>
-// // XML DOM and XPath
+// XML DOM and XPath
 #include <libxml/tree.h>
 #include <libxml/parser.h>
 #include <libxml/xpath.h>
@@ -25,23 +25,23 @@ json_object* compute_idf_score(json_object* json_workload) {
   int document_size = 0;
   if (document_string != NULL) { document_size = strlen(document_string); }
   // Parse it in LibXML and XPath all words:
-  /* Init libxml */     
+  /* Init libxml */
   xmlInitParser();
   xmlDocPtr doc;
   // TODO: Maybe also record entry name from the workload instead of anonymous.xml?
   doc = xmlReadMemory(document_string, document_size, "anonymous.xml", NULL, 0);
   if (doc == NULL) {
-      fprintf(stderr, "Failed to parse workload!\n");
-      log_message = "Fatal:LibXML:parse Failed to parse workload.";
-      return cortex_response_json("",log_message,-4); }
-  xmlXPathContextPtr xpath_context; 
+    fprintf(stderr, "Failed to parse workload!\n");
+    log_message = "Fatal:LibXML:parse Failed to parse workload.";
+    return cortex_response_json("",log_message,-4); }
+  xmlXPathContextPtr xpath_context;
   xmlXPathObjectPtr xpath_result;
   xpath_context = xmlXPathNewContext(doc);
   if(xpath_context == NULL) {
-      fprintf(stderr,"Error: unable to create new XPath context\n");
-      xmlFreeDoc(doc); 
-      log_message = "Fatal:LibXML:XPath unable to create new XPath context\n";
-      return cortex_response_json("",log_message,-4); }
+    fprintf(stderr,"Error: unable to create new XPath context\n");
+    xmlFreeDoc(doc);
+    log_message = "Fatal:LibXML:XPath unable to create new XPath context\n";
+    return cortex_response_json("",log_message,-4); }
 
   /* Register XHTML namespace */
   xmlXPathRegisterNs(xpath_context,  BAD_CAST "xhtml", BAD_CAST "http://www.w3.org/1999/xhtml");
@@ -50,19 +50,19 @@ json_object* compute_idf_score(json_object* json_workload) {
   /* Evaluate xpath expression */
   xpath_result = xmlXPathEvalExpression(xpath, xpath_context);
   if(xpath_result == NULL) {
-      fprintf(stderr,"Error: unable to evaluate xpath expression \"%s\"\n", xpath);
-      xmlXPathFreeContext(xpath_context); 
-      xmlFreeDoc(doc); 
-      log_message = "Fatal:LibXML:XPath unable to evaluate xpath expression\n";
-      return cortex_response_json("",log_message,-4); }
+    fprintf(stderr,"Error: unable to evaluate xpath expression \"%s\"\n", xpath);
+    xmlXPathFreeContext(xpath_context);
+    xmlFreeDoc(doc);
+    log_message = "Fatal:LibXML:XPath unable to evaluate xpath expression\n";
+    return cortex_response_json("",log_message,-4); }
 
   /* Print results */
   words_from_xpath_nodes(doc, xpath_result->nodesetval);
 
   /* Cleanup */
   xmlXPathFreeObject(xpath_result);
-  xmlXPathFreeContext(xpath_context); 
-  xmlFreeDoc(doc); 
+  xmlXPathFreeContext(xpath_context);
+  xmlFreeDoc(doc);
   /* Shutdown libxml */
   xmlCleanupParser();
   return cortex_response_json("",log_message,-1); //TODO
@@ -149,12 +149,12 @@ void words_from_xpath_nodes(xmlDocPtr doc, xmlNodeSetPtr nodes) {
 }
 
 void record_word(struct word_count_element **hash, char *word) {
-    struct word_count_element *w;
-    HASH_FIND_STR(*hash, word, w);  /* word already in the hash? */
-    if (w==NULL) { // New word
-      w = (struct word_count_element*)malloc(sizeof(struct word_count_element));
-      w->word = strdup(word);
-      w->count = 1;
-      HASH_ADD_KEYPTR( hh, *hash, w->word, strlen(w->word), w ); }
-    else { // Already exists, just increment the counter:
-      w->count++; } }
+  struct word_count_element *w;
+  HASH_FIND_STR(*hash, word, w);  /* word already in the hash? */
+  if (w==NULL) { // New word
+    w = (struct word_count_element*)malloc(sizeof(struct word_count_element));
+    w->word = strdup(word);
+    w->count = 1;
+    HASH_ADD_KEYPTR( hh, *hash, w->word, strlen(w->word), w ); }
+  else { // Already exists, just increment the counter:
+    w->count++; } }
