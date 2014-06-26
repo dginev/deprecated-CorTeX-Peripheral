@@ -1,0 +1,193 @@
+\providecommand{\bysame}{\leavevmode\hbox to3em{\hrulefill}\thinspace}
+\providecommand{\MR}{\relax\ifhmode\unskip\space\fi MR }
+% \MRhref is called by the amsart/book/proc definition of \MR.
+\providecommand{\MRhref}[2]{%
+  \href{http://www.ams.org/mathscinet-getitem?mr=#1}{#2}
+}
+\providecommand{\href}[2]{#2}
+\begin{thebibliography}{Mum07}
+
+\bibitem[Ara74]{arakelov:intersectiontheory}
+S.~J. Arakelov, \emph{An intersection theory for divisors on an arithmetic
+  surface}, Izv. Akad. Nauk SSSR Ser. Mat. \textbf{38} (1974), 1179--1192.
+
+\bibitem[Bel79]{belyi:theorem}
+G.~V. Bely{\u\i}, \emph{Galois extensions of a maximal cyclotomic field}, Izv.
+  Akad. Nauk SSSR Ser. Mat. \textbf{43} (1979), no.~2, 267--276, 479.
+
+\bibitem[BG06]{bogu:diophantinegeometry}
+E.~Bombieri and W.~Gubler, \emph{Heights in {D}iophantine geometry}, New
+  Mathematical Monographs, vol.~4, Cambridge University Press, Cambridge, 2006.
+
+\bibitem[BW07]{bawu:logarithmicforms}
+A.~Baker and G.~W{\"u}stholz, \emph{Logarithmic forms and {D}iophantine
+  geometry}, New Mathematical Monographs, vol.~9, Cambridge University Press,
+  Cambridge, 2007.
+
+\bibitem[Del87]{deligne:monodromie}
+P.~Deligne, \emph{Un th\'eor\`eme de finitude pour la monodromie}, Discrete
+  groups in geometry and analysis ({N}ew {H}aven, {C}onn., 1984), Progr. Math.,
+  vol.~67, Birkh\"auser Boston, Boston, MA, 1987, pp.~1--19.
+
+\bibitem[Fal83]{faltings:finiteness}
+G.~Faltings, \emph{Endlichkeitss\"atze f\"ur abelsche {V}ariet\"aten \"uber
+  {Z}ahlk\"orpern}, Invent. Math. \textbf{73} (1983), no.~3, 349--366.
+
+\bibitem[Fal84]{faltings:arithmeticsurfaces}
+\bysame, \emph{Calculus on arithmetic surfaces}, Ann. of Math. (2) \textbf{119}
+  (1984), no.~2, 387--424.
+
+\bibitem[Fre89]{frey:linksulm}
+G.~Frey, \emph{Links between solutions of {$A-B=C$} and elliptic curves},
+  Number theory ({U}lm, 1987), Lecture Notes in Math., vol. 1380, Springer, New
+  York, 1989, pp.~31--62.
+
+\bibitem[GR72]{grra:neronmodels}
+A.~Grothendieck and M.~Raynaud, \emph{Mod\'eles de {N}\'eron et monodromie},
+  Groupes de monodromie en G\'eometrie Algebrique, I, II, Springer, 1972,
+  pp.~313--523. Lecture Notes in Math., Vol. 288.
+
+\bibitem[Jav13]{javanpeykar:belyi}
+A.~Javanpeykar, \emph{Polynomial bounds for {A}rakelov invariants of {B}elyi
+  curves}, To appear in Algebra Number Theory (2013), 1--43, Online available:
+  www.math.leidenuniv.nl/$\sim$ajavanp/.
+
+\bibitem[dJ05]{dejong:riemanninvariants}
+R.~de~Jong, \emph{Arakelov invariants of {R}iemann surfaces}, Doc. Math.
+  \textbf{10} (2005), 311--329.
+
+\bibitem[dJ09]{dejong:weierstrasspoints}
+\bysame, \emph{Local invariants attached to {W}eierstrass points}, Manuscripta
+  Math. \textbf{129} (2009), no.~3, 273--292.
+
+\bibitem[dJR11]{jore:shafarevich}
+R.~de~Jong and G.~R{\'e}mond, \emph{Conjecture de {S}hafarevitch effective pour
+  les rev\^{e}tements cycliques}, Algebra Number Theory \textbf{5} (2011),
+  no.~8, 1133--1143.
+
+\bibitem[vK13]{rvk:szpiro}
+R.~von K\"anel, \emph{On {S}zpiro's {D}iscriminant {C}onjecture}, Int. Math.
+  Res. Not. IMRN (2013), 1--35, Published online: doi:10.1093/imrn/rnt079.
+
+\bibitem[Kha02]{khadjavi:belyi}
+L.~S. Khadjavi, \emph{An effective version of {B}elyi's theorem}, J. Number
+  Theory \textbf{96} (2002), no.~1, 22--47.
+
+\bibitem[Lev12]{levin:siegelshaf}
+A.~Levin, \emph{{S}iegel's theorem and the {S}hafarevich conjecture}, J.
+  Th\'eor. Nombres Bordeaux \textbf{24} (2012), no.~3, 705--727.
+
+\bibitem[Li{\c{t}}04]{litcanu:belyi}
+R.~Li{\c{t}}canu, \emph{Propri\'et\'es du degr\'e des morphismes de {B}elyi},
+  Monatsh. Math. \textbf{142} (2004), no.~4, 327--340.
+
+\bibitem[Liu02]{liu:ag}
+Q.~Liu, \emph{Algebraic geometry and arithmetic curves}, Oxford Graduate Texts
+  in Mathematics, vol.~6, Oxford University Press, Oxford, 2002, Oxford Science
+  Publications.
+
+\bibitem[LL99]{lilo:modelsofcurves}
+Q.~Liu and D.~Lorenzini, \emph{Models of curves and finite covers}, Compositio
+  Math. \textbf{118} (1999), no.~1, 61--102.
+
+\bibitem[LRS93]{lorosi:conductor}
+P.~Lockhart, M.~Rosen, and J.~H. Silverman, \emph{An upper bound for the
+  conductor of an abelian variety}, J. Algebraic Geom. \textbf{2} (1993),
+  no.~4, 569--601.
+
+\bibitem[Mas02]{masser:abc}
+D.~W. Masser, \emph{On {$abc$} and discriminants}, Proc. Amer. Math. Soc.
+  \textbf{130} (2002), no.~11, 3141--3150.
+
+\bibitem[MB89]{moba:noether}
+L.~Moret-Bailly, \emph{La formule de {N}oether pour les surfaces
+  arithm\'etiques}, Invent. Math. \textbf{98} (1989), no.~3, 491--498.
+
+\bibitem[MB90]{moret-bailly:effmordell}
+\bysame, \emph{Hauteurs et classes de {C}hern sur les surfaces
+  arithm\'etiques}, Ast\'erisque (1990), no.~183, 37--58, S{\'e}minaire sur les
+  Pinceaux de Courbes Elliptiques (Paris, 1988).
+
+\bibitem[Mil72]{milne:arithmetic}
+J.~S. Milne, \emph{On the arithmetic of abelian varieties}, Invent. Math.
+  \textbf{17} (1972), 177--190.
+
+\bibitem[Mum07]{mumford:theta2}
+D.~Mumford, \emph{Tata lectures on theta. {II}}, Modern Birkh\"auser Classics,
+  Birkh\"auser Boston Inc., Boston, MA, 2007, Jacobian theta functions and
+  differential equations, With the collaboration of C. Musili, M. Nori, E.
+  Previato, M. Stillman and H. Umemura, Reprint of the 1984 original.
+
+\bibitem[Oor74]{oort:shafarevich}
+F.~Oort, \emph{Hyperelliptic curves over number fields}, Classification of
+  algebraic varieties and compact complex manifolds, Springer, Berlin, 1974,
+  pp.~211--218. Lecture Notes in Math., Vol. 412.
+
+\bibitem[Par68]{parshin:construction}
+A.~N. Par{\v{s}}in, \emph{Algebraic curves over function fields. {I}}, Izv.
+  Akad. Nauk SSSR Ser. Mat. \textbf{32} (1968), 1191--1219.
+
+\bibitem[Par72]{parshin:shafarevich}
+\bysame, \emph{Minimal models of curves of genus {$2$}, and homomorphisms of
+  abelian varieties defined over a field of finite characteristic}, Izv. Akad.
+  Nauk SSSR Ser. Mat. \textbf{36} (1972), no.~1, 67--109.
+
+\bibitem[Par88]{parshin:szpiro}
+A.~N. Parshin, \emph{The {B}ogomolov-{M}iyaoka-{Y}au inequality for the
+  arithmetical surfaces and its applications}, S\'eminaire de {T}h\'eorie des
+  {N}ombres, {P}aris 1986--87, Progr. Math., vol.~75, Birkh\"auser Boston,
+  Boston, MA, 1988, pp.~299--312.
+
+\bibitem[Paz12]{pazuki:heights}
+F.~Pazuki, \emph{Theta height and {F}altings height}, Bull. Soc. Math. France
+  \textbf{140} (2012), no.~1, 19--49.
+
+\bibitem[R{\'e}m10]{remond:rational}
+G.~R{\'e}mond, \emph{Nombre de points rationnels des courbes}, Proc. Lond.
+  Math. Soc. (3) \textbf{101} (2010), no.~3, 759--794.
+
+\bibitem[ST68]{seta:goodreduction}
+J.-P. Serre and J.~Tate, \emph{Good reduction of abelian varieties}, Ann. of
+  Math. (2) \textbf{88} (1968), 492--517.
+
+\bibitem[Szp81]{szpiro:seminaire81}
+L.~Szpiro, \emph{S\'eminaire sur les {P}inceaux de {C}ourbes de {G}enre au
+  {M}oins {D}eux}, Ast\'erisque, vol.~86, Soci\'et\'e Math\'ematique de France,
+  Paris, 1981.
+
+\bibitem[Szp85a]{szpiro:faltings}
+\bysame, \emph{La conjecture de {M}ordell (d'apr\`es {G}. {F}altings)},
+  Ast\'erisque (1985), no.~121-122, 83--103, Seminar Bourbaki, Vol. 1983/84.
+
+\bibitem[Szp85b]{szpiro:spa}
+L.~Szpiro (ed.), \emph{S\'eminaire sur les pinceaux arithm\'etiques: la
+  conjecture de {M}ordell}, Soci\'et\'e Math\'ematique de France, Paris, 1985,
+  Papers from the seminar held at the {\'E}cole Normale Sup{\'e}rieure, Paris,
+  1983--84, Ast{\'e}risque No. 127 (1985).
+
+\bibitem[Szp86]{szpiro:lefschetz}
+\bysame, \emph{Small points and torsion points}, The {L}efschetz centennial
+  conference, {P}art {I} ({M}exico {C}ity, 1984), Contemp. Math., vol.~58,
+  Amer. Math. Soc., Providence, RI, 1986, pp.~251--260.
+
+\bibitem[Szp90a]{szpiro:spe}
+L.~Szpiro (ed.), \emph{S\'eminaire sur {L}es {P}inceaux de {C}ourbes
+  {E}lliptiques}, Soci\'et\'e Math\'ematique de France, Paris, 1990, {\`A} la
+  recherche de ``Mordell effectif''. Papers from the seminar held in Paris,
+  1988, Ast{\'e}risque No. 183 (1990).
+
+\bibitem[Szp90b]{szpiro:grothendieck}
+\bysame, \emph{Sur les propri\'et\'es num\'eriques du dualisant relatif d'une
+  surface arithm\'etique}, The {G}rothendieck {F}estschrift, {V}ol.\ {III},
+  Progr. Math., vol.~88, Birkh\"auser Boston, Boston, MA, 1990, pp.~229--246.
+
+\bibitem[Zha92]{zhang:positive}
+S.~Zhang, \emph{Positive line bundles on arithmetic surfaces}, Ann. of Math.
+  (2) \textbf{136} (1992), no.~3, 569--587.
+
+\bibitem[Zog91]{zograf:rademacher}
+P.~Zograf, \emph{A spectral proof of {R}ademacher's conjecture for congruence
+  subgroups of the modular group}, J. Reine Angew. Math. \textbf{414} (1991),
+  113--116.
+
+\end{thebibliography}
