@@ -1,5 +1,6 @@
 ![CorTeX-Peripheral](https://raw.github.com/dginev/CorTeX/master/public/img/logo.jpg) Peripheral
 =================
+[![Build Status](https://secure.travis-ci.org/dginev/CorTeX-Peripheral.png?branch=master)](http://travis-ci.org/dginev/CorTeX-Peripheral)
 
 Peripheral management for the CorTeX system:
  * Spawner service for available CorTeX Services
