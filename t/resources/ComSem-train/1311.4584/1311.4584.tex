@@ -1,0 +1,244 @@
+\documentclass[english,a4paper,12pt]{amsart}
+\usepackage[a4paper,lmargin=2cm,rmargin=2cm,tmargin=4cm,bmargin=4cm]{geometry}
+\usepackage[centertags]{amsmath}
+\usepackage{amsfonts}
+\usepackage{amssymb}
+\usepackage{amsthm}
+\usepackage[draft]{graphicx}
+%\usepackage{mathabx}
+\usepackage[colorlinks]{hyperref}
+%\usepackage{textcomp}
+%\usepackage{ulem}%\sout strikethrough text
+%\usepackage{mathrsfs}
+
+
+
+\newcommand{\Complex}{\mathbb C}
+\newcommand{\Natural}{\mathbb N}
+\newcommand{\Rational}{\mathbb Q}
+\newcommand{\Integer}{\mathbb Z}
+\newcommand{\Real}{\mathbb R}
+\newcommand{\M}{\mathbb M}
+\newcommand{\abs}[1]{\left\vert#1\right\vert}
+\newcommand{\set}[1]{\left\{#1\right\}}
+\newcommand{\restricted}{\upharpoonright}
+\newcommand{\cardinality}[1]{\abs{#1}}
+
+\newcommand{\diam}{\mathop{\mathrm{diam}}\nolimits}
+\newcommand{\dist}{\mathop{\mathrm{dist}}\nolimits}
+\newcommand{\rng}{\mathop{\mathrm{rng}}\nolimits}
+\newcommand{\dent}{\mathop{\mathrm{Dz}}\nolimits}
+
+\newcommand{\norm}[1]{\left\Vert#1\right\Vert}
+\newcommand{\duality}[1]{\left\langle#1\right\rangle}
+\newcommand{\clco}{\mathop{\overline{\mathrm{co}}}\nolimits}
+\newcommand{\closedball}[1]{B_{#1}}
+\newcommand{\openball}[1]{B^O_{#1}}
+\newcommand{\sphere}[1]{S_{#1}}
+\newcommand{\indicator}[1]{{\mathbf 1}_{{#1}}}
+\newcommand{\Nsubsets}[1]{\Natural^{(#1)}}
+\newcommand{\ses}[5]{0 \longrightarrow {#1} \stackrel{#4}{\longrightarrow} {#2} \stackrel{#5}{\longrightarrow} {#3} \longrightarrow 0}
+\newcommand{\tn}[1]{\left\vvvert#1\right\vvvert}
+\newcommand{\csp}[1]{\overline{\mathrm{span}}^{#1}}
+\def\U{{\mathcal U}}
+\def\Lim{\displaystyle \lim}
+\newcommand{\embeds}[1]{{\hookrightarrow}{_#1}}
+\newcommand{\comment}[1]{#1}
+\newcommand{\ToDo}[1]{{\color{blue}#1}}
+
+
+%\swapnumbers
+\theoremstyle{plain}
+\newtheorem{thm}{Theorem}
+\newtheorem{cor}[thm]{Corollary}
+\newtheorem{lem}[thm]{Lemma}
+\newtheorem{prop}[thm]{Proposition}
+\newtheorem{conj}[thm]{Conjecture}
+
+\theoremstyle{definition}
+\newtheorem{defn}[thm]{Definition}
+\newtheorem{rem}[thm]{Remark}
+\newtheorem{exc}[thm]{Exercise}
+\newtheorem{prob}[thm]{Problem}
+
+
+
+
+\begin{document}
+\title{Low distortion embeddings into Asplund Banach spaces}
+\author{Anton\'\i n Proch\'azka$^\dag$}
+\address{$^\dag$ Universit\'e Franche-Comt\'e\\
+Laboratoire de Math\'ematiques UMR 6623\\
+16 route de Gray\\
+25030 Besan\c con Cedex\\
+France}
+%%%%%%%%%%%%%%
+\thanks{The first named author was partially supported by  PHC Barrande 2013 26516YG}
+%%%%%%%%%%%%%%%%%%%%%%%%%%
+\email{antonin.prochazka@univ-fcomte.fr}
+
+\author{Luis S\'anchez-Gonz\'alez$^\ddag$}
+
+\address{$^\ddag$ Departamento de Ingenier{\'i}a Matem{\'a}tica\\ Facultad de CC. F{\'i}sicas y  Matem{\'a}ticas\\ Universidad de Concepci{\'o}n\\ Casilla 160-C, Concepci{\'o}n, Chile}
+%%%%%%%%%%%%%%%%%
+\thanks{
+ The second named author was partially supported by   MICINN Project MTM2012-34341 (Spain) and FONDECYT project 11130354 (Chile). This work started while L. S\'anchez-Gonz\'alez held a post-doc position at Universit\'e Franche-Comt\'e}
+%%%%%%%%%%%%%%%%%%%%%%%%5
+\email{lsanchez@ing-mat.udec.cl}
+
+\begin{abstract}
+We give a simple example of a countable metric space that does not embed bi-Lipschitz with distortion strictly less than 2 into any Asplund space. 
+\end{abstract}
+\maketitle
+\section{Introduction}
+We say that a Banach space $X$ is \emph{$D$-bi-Lipschitz universal} if every separable metric space embeds into $X$ with distortion at most $D$. The results of \cite{KL}, resp. \cite{Aharoni}, show that $c_0$ is $2$-bi-Lipschitz universal, resp. is not $D$-bi-Lipschitz universal for any $D<2$. In the recent preprint~\cite{Baudier}, F.~Baudier raised the following question: given a $C(K)$ Banach space $X$, what is the least constant $D$ such that $X$ is $D$-bi-Lipschitz universal? 
+
+The goal of the present article is to prove that Asplund $C(K)$ spaces and, more generally, all Asplund Banach spaces can be $D$-bi-Lipschitz universal only if $D\geq 2$.
+
+We obtain our $C(K)$ result as a slight modification of Baudier's elaboration on  Aharoni's original argument that $\ell_1$ does not embed into $c_0$ with distortion strictly less than $2$.
+The general result is then obtained by a direct application of the deep ``Zippin's lemma''~\cite[Theorem~1.2]{Zippin}.
+
+An immediate corollary of our $C(K)$ result is that the $C(K)$ spaces which are $D$-bi-Lipschitz universal with $D<2$ are isomorphically universal for the class of separable Banach spaces. One may ask whether this is true in general.
+\begin{prob}
+ Assume that $X$ is $D$-bi-Lipschitz universal with $D<2$. Does then every separable Banach space linearly embed into $X$?
+\end{prob}
+
+
+%\section{Preliminaries}
+%All Banach spaces considered in this paper are real.  
+
+ The notation we use is standard. A mapping $f:M \to N$ between metric spaces $(M,d)$ and $(N,\rho)$ is bi-Lipschitz if there are constants $C_1,C_2>0$ such that
+$C_1 d(x,y)\leq \rho(f(x),f(y))\leq C_2 d(x,y)$ for all $x,y \in M$. The distortion $\dist(f)$ of $f$ is defined as $\inf \frac{C_2}{C_1}$ where the infimum is taken over all constants $C_1,C_2$ which satisfy the above inequality. We say that $M$ embeds bi-Lipschitz into $N$ with distortion $D$ if there exists such $f:M\to N$ with $\dist(f)=D$. In this case, if the target space $N$ is a Banach space, we may always assume (by changing $f$) that $C_1=1$.
+For the following notions and results, see~\cite{DGZ}. %\cite[Chapter VI.8]{DGZ}. 
+A Banach space $X$ is called Asplund if every closed separable subspace $Y \subset X$ has separable dual.
+A Hausdorff compact $K$ is called scattered if there exists an ordinal $\alpha$ such that the Cantor-Bendixson derivative $K^{(\alpha)}$ is empty. 
+A countable Hausdorff compact is necessarily scattered. 
+If $K$ is a Hausdorff compact then $C(K)$ is Asplund iff $K$ is scattered. 
+
+\section{Results}
+Let $M=\set{\emptyset} \cup \Natural \cup F$ where $F=\set{A\subset \Natural:1\leq \cardinality{A}<\infty}$ is the set of all finite nonempty subsets of $\Natural$.
+We put an edge between two points $a,b$ of $M$ iff
+$a=\emptyset$ and $b\in \Natural$ or $a\in \Natural$, $b \in F$ and $a\in b$ thus introducing a graph structure on $M$.
+The shortest path metric $d$ on $M$ is then given for $n \neq m \in \Natural\subset M$ and $A\neq B \in F$ by 
+\begin{center}
+\begin{tabular}{cccc}
+ $d(\emptyset,n)=1,$& $d(n,m)=2,$ & $d(n,A)=1$ if $n\in A,$ & $d(n,A)=3$ if $n \notin A,$\\
+ $d(\emptyset,A)=2,$& $d(A,B)=2$ if $A\cap B \neq \emptyset,$& $d(A,B)=4$ if $A \cap B =\emptyset$.
+\end{tabular}
+\end{center}
+
+%\[
+%\begin{split}
+%d(\emptyset,n)=1 &\mbox{ if } n \in \Natural\\
+%d(n,m)=2 &\mbox{ if } n \neq m \in \Natural\\
+%d(n,A)=1 &\mbox{ if } n \in A \in F\\
+%d(n,A)=3 &\mbox{ if } n \notin A \in F\\
+%d(\emptyset,A)= 2 &\mbox{ if } A \in F\\
+%d(A,B)=0 &\mbox{ if } A=B \in F\\
+%d(A,B)=2 &\mbox{ if } A\cap B \neq \emptyset \mbox{ and } A\not= B\\
+%d(A,B)=4 &\mbox{ if } A\cap B = \emptyset
+%\end{split}
+%\]
+\noindent
+Thus $(M,d)$ is a countable (in particular separable) metric space.
+
+\begin{lem}\label{l:CK}
+Let $X=C(K)$ for some compact space $K$ and assume that there exist $D\in [1,2)$ and $f:M \to X$ such that 
+\[
+ d(x,y) \leq \norm{f(x)-f(y)}\leq Dd(x,y).
+\]
+Then $K$ is not scattered.
+\end{lem}
+\begin{proof}
+We may assume, without loss of generality, that $f(\emptyset)=0$. We will show for any ordinal $\alpha$ that $K^{(\alpha)} \neq \emptyset$.
+Let $\eta=4-2D>0$.
+For any $i,j \in \Natural$ let $X_{i,j}=\set{x^* \in K: \abs{\duality{x^*,f(i)-f(j)}}\geq \eta}$. These are closed subsets of $K$. 
+%(In other words they are $w^*$-closed subsets of the dual sphere.)
+We will show that for any disjoint $A,B \in F$ and any ordinal $\alpha$ we have
+\[
+ \bigcap_{a \in A,b\in B} X_{a,b} \cap K^{(\alpha)} \neq \emptyset.
+\]
+Let us start with $\alpha=0$.
+Let $A,B \in F$ be disjoint. We take $x^* \in K$ such that $\abs{\duality{x^*,f(A)-f(B)}}=\norm{f(A)-f(B)}\geq 4$.
+Then for any $a \in A$ and any $b\in B$ we have
+\[
+\begin{split}
+ \abs{\duality{x^*,f(a)-f(b)}}&\geq \abs{\duality{x^*,f(A)-f(B)}}-\abs{\duality{x^*,f(A)-f(a)}}-\abs{\duality{x^*,f(B)-f(b)}}\\
+&\geq 4-2D=\eta
+\end{split}
+\]
+thus $\displaystyle x^* \in \bigcap_{a \in A,b\in B} X_{a,b} \cap K$.
+
+Let us assume that we have proved the claim for every $\beta<\alpha$.
+If $\alpha$ is a limit ordinal then the 
+%weak$^*$-
+closedness of $X_{i,j}$ implies the claim.
+Let us assume that $\alpha=\beta+1$.  
+Let us fix two disjoint sets $A,B \in F$. Let $N=1+\max A\cup B$.
+By the inductive hypothesis we know that for $N\leq i<j$ there is $x^*_{i,j} \in K$ s.t.
+\[
+ x^*_{i,j}\in K^{(\beta)}\cap \bigcap_{a\in A \cup \set{i} ,b \in B \cup \set{j}} X_{a,b}.
+\]
+We put $\Gamma:=\set{x^*_{i,j}:N\leq i<j} \subset K$.
+We define $\Phi:\Natural \cap [N,\infty) \to \ell_\infty(\Gamma)$ by $\Phi(i):=(\duality{\gamma,f(i)})_{\gamma \in \Gamma}$.
+Then the image of $\Phi$ is an $\eta$-separated countably infinite bounded set.
+Indeed $\norm{\Phi(i)}_\infty \leq \norm{f(i)} \leq Dd(i,\emptyset)=D$.
+Let $N\le i<j$ then $\norm{\Phi(i)-\Phi(j)}_{\infty} \geq \abs{\duality{x^*_{i,j},f(i)-f(j)}}\geq \eta$.
+Thus $\Gamma$ is infinite and therefore $\displaystyle K^{(\beta)}\cap \bigcap_{a \in A,b\in B} X_{a,b}$ is infinite, too.
+Now the 
+%weak$^*$-
+closedness of $\displaystyle \bigcap_{a \in A,b\in B} X_{a,b}$ and compactness of $K^{(\beta)}$ imply our claim.
+\end{proof}
+
+\begin{cor}
+ If $X=C(K)$ for some \emph{metrizable} compact space $K$ and $(M,d)$ embeds into $X$ with distortion strictly less than $2$, then $X$ is (isomorphically) universal for all separable spaces.
+\end{cor}
+\begin{proof}
+Using Lemma \ref{l:CK} and Milutin's theorem~\cite{Rosenthal,AlbiacKalton}, $X$ is isomorphic to $C[0,1]$. Thus,  Banach-Mazur's theorem~\cite{AlbiacKalton} finishes the proof.
+\end{proof}
+
+\begin{thm}\label{t:Main}
+ Let $X$ be an Asplund space and assume that $(M,d)$ embeds into $X$ with distortion~$D$. Then $D\geq 2$. Consequently, no Asplund space is universal for embeddings of distortion strictly less than $2$ for all separable metric spaces.
+\end{thm}
+Since $M$ is countable, we may assume that $X$ is separable.
+The proof is then based on Lemma~\ref{l:CK} and the following theorem of Zippin, see~\cite[Theorem~1.2]{Zippin} or \cite[Lemma~5.11]{Rosenthal}.
+%\begin{thm}  Let $X$ be a separable Asplund space and $\frac12>\varepsilon>0$. Then there exist a compact $K$, an ordinal $\beta < \displaystyle \omega^{Sz(X,\frac\varepsilon8)+1}$, a subspace $Y$ of $C(K)$, isometric to $C([0,\beta])$ and an embedding $i:X \to C(K)$ with $\norm{i}\norm{i^{-1}}<1+\varepsilon$ such that for any $x\in X$ we have \[  \dist(i(x),Y)\leq 2\varepsilon\norm{i(x)}. \]
+%The role of $C(K)$ is purely ``ambiental'' --  it should be replaced by just a Banach space $Z$. \end{thm}
+\begin{thm}
+ Let $X$ be a separable Asplund space. Let $\varepsilon>0$. Then there exist a Banach space~$Z$, a countable Hausdorff (in particular scattered) compact $S$, a subspace $Y$ of $Z$ isometric to $C(S)$ and a linear embedding $i:X \to Z$ with $\norm{i}\norm{i^{-1}}<1+\varepsilon$ such that for any $x\in X$ we have 
+\[  
+\dist_Z(i(x),Y)\leq \varepsilon\norm{i(x)}_Z. 
+\] 
+\end{thm}
+
+
+\begin{proof}[Proof of Theorem \ref{t:Main}]
+Let us assume that $D<2$.
+Let $\varepsilon>0$ be small enough so that $D'=D(1+\varepsilon)<2$ and also that for $\eta:=\varepsilon2D'$ we have $\displaystyle \frac{1+4\varepsilon }{1-2\eta}D'<2$.
+Then $(M,d)$ embeds into $Z$ with distortion $D'<2$ via some embedding $g$ such that $d(x,y)\leq \norm{g(x)-g(y)}\leq D'd(x,y)$. We may assume, without loss of generality, $g(\emptyset)=0$. Thus for every $x \in M$ we have $\norm{g(x)}\leq 2D'$.
+%Let $\varepsilon>0$ small enough so that for $\eta:=2\varepsilon2D'$ we have $\displaystyle \frac{1+8\varepsilon }{1-2\eta}D'<2$.
+We know that for each $x \in M$ there is $f(x) \in Y$ such that $\norm{g(x)-f(x)}\leq \eta$.
+This implies that $\norm{g(x)-g(y)}-2\eta\leq \norm{f(x)-f(y)}\leq \norm{g(x)-g(y)}+2\eta$.
+Now since $1\leq d(x,y)$ we have 
+\[
+ d(x,y)(1-2\eta)\leq \norm{f(x)-f(y)}\leq d(x,y)D'(1+4\varepsilon).
+\]
+This proves that $f$ is a bi-Lipschitz embedding of $M$ into $C(S)$ with distortion strictly less than $2$ which is impossible according to Lemma~\ref{l:CK}.
+\end{proof}
+
+
+
+\begin{thebibliography}{A}
+ \bibitem{Aharoni}{I. Aharoni, {\it Every separable metric space is Lipschitz equivalent to a subset of $c_0^+$}, Israel J. Math. {\bf 19} (1974), 284--291.}
+ \bibitem{AlbiacKalton}{F. Albiac and N. Kalton, {\it Topics in Banach space theory}, Graduate Texts in Mathematics, vol. 233, Springer, New York, 2006.}
+% \bibitem{BanachMazur}{S. Banach and S. Mazur, {\it Zur Theorie der linearen Dimension}}, Studia Math. {\bf 4} (1933), 100-112.
+ \bibitem{Baudier}{F. Baudier, {\it A topological obstruction for small-distortion embeddability into spaces of continuous functions on countable compact metric spaces}, arXiv:1305.4025 [math.FA]}
+\bibitem{DGZ}
+{  R. Deville, G. Godefroy \and V. Zizler},
+Smoothness and renormings in Banach spaces, Pitman Monographs and Surveys in Pure and Applied Mathematics 64 (Longman Scientific \& Technical, Harlow, 1993).
+ \bibitem{KL}{N. Kalton and G. Lancien, {\it  Best constants for Lipschitz embeddings of metric spaces into $c_0$}, Fund. Math. {\bf 199} (2008), no. 3, 249–272.}
+ \bibitem{Rosenthal}{H. Rosenthal, {\it The Banach Spaces $C(K)$}, in  Handbook of the geometry of Banach spaces, Vol. 2, 1823, North-Holland, Amsterdam, 2003.}
+ \bibitem{Zippin}{M. Zippin, {\it The separable extension problem}, Israel J. Math. {\bf 26} (1977), no. 3-4, 372--387.}
+\end{thebibliography}
+
+\end{document}

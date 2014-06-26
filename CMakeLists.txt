@@ -1,3 +1,4 @@
+# CorTeX Peripherals 
 cmake_minimum_required(VERSION 2.8)
 project(CorTeX_Peripheral C)
 SET( ${PROJECT_NAME}_MAJOR_VERSION 0 )
@@ -13,15 +14,15 @@ find_library(LIBJSON json-c)
 find_library(LIBGEARMAN gearman)
 find_library(uthash uthash)
 
-include_directories ("${PROJECT_SOURCE_DIR}/lib"
+include_directories ("${PROJECT_SOURCE_DIR}/clib"
                      "${CMAKE_CURRENT_BINARY_DIR}")
-add_library(cortex_utils lib/cortex_utils.c)
-add_library(IDF_Score lib/idf_score.c)
+add_library(cortex_utils clib/cortex_utils.c)
+add_library(IDF_Score clib/idf_score.c)
 
 FIND_PACKAGE(LibXml2 REQUIRED)
 include_directories(${LIBXML2_INCLUDE_DIR})
 
-add_executable(cortex_worker lib/cortex_worker.c)
+add_executable(cortex_worker clib/cortex_worker.c)
 target_link_libraries(cortex_worker cortex_utils IDF_Score ${LIBJSON} ${LIBGEARMAN} ${uthash_LIBRARIES} ${LIBXML2_LIBRARIES})
 
 set (EXTRA_LIBS ${EXTRA_LIBS} IDF_Score)
