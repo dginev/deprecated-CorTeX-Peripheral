@@ -10,5 +10,41 @@ before_install:
   #This should solve problem installing Perl's DB_File & GraphViz
   - "sudo apt-get update -qq"
   - "sudo apt-get install libdb-dev libxml2-dev 2>&1 | tail -n 4"
+  - sudo apt-get install gearman libgearman-dev
   - "TMPDIR=/tmp; cpanm git://github.com/brucemiller/LaTeXML.git"
-  - "TMPDIR=/tmp; cpanm git://github.com/KWARC/LLaMaPUn.git"
+  #- "TMPDIR=/tmp; cpanm git://github.com/KWARC/LLaMaPUn.git"
+  - cpanm AnyEvent::Gearman Unix::Processors XML::LibXML Scalar::Util File::Slurp Lingua::EN::Sentence
+  #install LLaMaPUn   (perl part)
+  - git clone https://github.com/KWARC/LLaMaPUn.git
+  - cd LLaMaPUn
+  - perl Makefile.PL
+  - make
+  - sudo make install
+  #install LLaMaPUn    (c part)
+  - sudo apt-get install libjson0-dev
+  - sudo apt-get install uthash-dev
+  - sudo wget http://ftp.gnu.org/pub/gnu/libiconv/libiconv-1.14.tar.gz
+  - sudo tar -xvzf libiconv-1.14.tar.gz
+  - cd libiconv-1.14
+  - sudo ./configure --prefix=/usr/local/libiconv
+  - sudo make
+  - sudo make install
+  - cd ..
+
+  - cd clib; sh jsonincludecheck.sh > /dev/null; mkdir -p build; cd build
+  - cmake ..
+  - make
+  - sudo make install
+  - cd ../..
+
+install:
+  - git clone https://github.com/dginev/CorTeX-Peripheral.git
+  - cd CorTeX-Peripheral
+  - perl Makefile.PL
+  - make
+  - make test
+  - sudo make install
+  #build cortex_worker
+  - mkdir -p build; cd build
+  - cmake ..
+  - make
