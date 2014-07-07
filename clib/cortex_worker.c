@@ -5,7 +5,7 @@
 // Hashes
 #include <uthash.h>
 // JSON
-#include <json-c/json.h>
+#include "jsoninclude.h"
 // Gearman 
 #include <libgearman/gearman.h>
 // Self

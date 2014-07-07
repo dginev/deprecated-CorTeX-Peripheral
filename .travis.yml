@@ -45,6 +45,7 @@ install:
   - make test
   - sudo make install
   #build cortex_worker
+  - cd clib; sh jsonincludecheck.sh > /dev/null; cd ..
   - mkdir -p build; cd build
   - cmake ..
   - make

@@ -1,3 +1,3 @@
-#include <json-c/json.h>
+#include "jsoninclude.h"
 
 json_object* get_ngrams(json_object*);
