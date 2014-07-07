@@ -13,17 +13,21 @@ SET(CMAKE_C_FLAGS
 find_library(LIBJSON json-c)
 find_library(LIBGEARMAN gearman)
 find_library(uthash uthash)
+find_library(LIBLLAMAPUN llamapun REQUIRED)
 
 include_directories ("${PROJECT_SOURCE_DIR}/clib"
                      "${CMAKE_CURRENT_BINARY_DIR}")
 add_library(cortex_utils clib/cortex_utils.c)
 add_library(IDF_Score clib/idf_score.c)
+add_library(llamapun_interface clib/llamapun_interface.c)
 
 FIND_PACKAGE(LibXml2 REQUIRED)
 include_directories(${LIBXML2_INCLUDE_DIR})
 
 add_executable(cortex_worker clib/cortex_worker.c)
-target_link_libraries(cortex_worker cortex_utils IDF_Score ${LIBJSON} ${LIBGEARMAN} ${uthash_LIBRARIES} ${LIBXML2_LIBRARIES})
+target_link_libraries(llamapun_interface ${LIBLLAMAPUN})
+target_link_libraries(cortex_worker cortex_utils IDF_Score llamapun_interface
+	${LIBLLAMAPUN} ${LIBJSON} ${LIBGEARMAN} ${uthash_LIBRARIES} ${LIBXML2_LIBRARIES})
 
 set (EXTRA_LIBS ${EXTRA_LIBS} IDF_Score)
 

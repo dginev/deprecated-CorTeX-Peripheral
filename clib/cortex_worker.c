@@ -14,6 +14,7 @@
 // Services:
 // #include<cortex/myservice.h>
 #include "idf_score.h"
+#include "llamapun_interface.h"
 
 /* Usually you would define your services in separate libraries that you import via #includes */
 json_object* cortex_example_service (json_object* workload) {
@@ -37,6 +38,11 @@ int main(int argc, char** argv) {
   idf_service_registration->name = "idf_score_v0_1";
   idf_service_registration->callback = compute_idf_score;
   HASH_ADD_KEYPTR( hh, cortex_services, idf_service_registration->name, strlen(idf_service_registration->name), idf_service_registration);
+  // N-Grams:
+  struct service_registration* ngram_service_registration = (struct service_registration*)malloc(sizeof(struct service_registration));
+  ngram_service_registration->name = "ngram_v0_1";
+  ngram_service_registration->callback = get_ngrams;
+  HASH_ADD_KEYPTR( hh, cortex_services, ngram_service_registration->name, strlen(ngram_service_registration->name), ngram_service_registration);
 
   // Obtain the callback for the currently requested service:
   struct service_registration* service_description;
@@ -73,9 +79,11 @@ void cortex_loop(char* gearman_uri, int gearman_port, int timeout, char* service
 
   gearman_worker_add_function(&worker, service_name, timeout, cortex_process_document, callback);
   while(1) {
+    printf("Run job\n");
     gearman_worker_work(&worker);
-    gearman_worker_free(&worker);
   }
+    printf("free it\n");
+    gearman_worker_free(&worker);
   return; }
 
 void *cortex_process_document(gearman_job_st *job, void *context, size_t *size, gearman_return_t *ret) {
@@ -84,6 +92,7 @@ void *cortex_process_document(gearman_job_st *job, void *context, size_t *size, 
 
   size_t workload_size = gearman_job_workload_size(job);
   void* workload = gearman_job_take_workload(job,&workload_size);
+  printf("WORKLOAD: %.100s\n", (char*)workload);
   json_object * json_workload = json_tokener_parse((char*)workload);
   // Invoke callback on the workload and get the response:
   json_object* json_response = callback(json_workload);
