@@ -91,9 +91,11 @@ void *cortex_process_document(gearman_job_st *job, void *context, size_t *size, 
   inner_json_callback_t callback = (inner_json_callback_t) context;
 
   size_t workload_size = gearman_job_workload_size(job);
-  void* workload = gearman_job_take_workload(job,&workload_size);
-  printf("WORKLOAD: %.100s\n", (char*)workload);
-  json_object * json_workload = json_tokener_parse((char*)workload);
+  char* workload = (char *)gearman_job_take_workload(job,&workload_size);
+  workload = (char *)realloc(workload, workload_size+1);
+  workload[workload_size] = '\0';
+  printf("WORKLOAD: %.100s\n", workload);
+  json_object * json_workload = json_tokener_parse(workload);
   // Invoke callback on the workload and get the response:
   json_object* json_response = callback(json_workload);
   // Return to Gearman:
