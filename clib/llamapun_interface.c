@@ -5,9 +5,11 @@
 
 json_object* get_ngrams(json_object* workload) {
 	json_object * doc = json_object_object_get(workload, "document");
-	char *xmlstring = json_object_get_string(doc);
-	json_object * answer = llamapun_get_ngrams (xmlParseMemory(xmlstring, strlen(xmlstring)));
+	const char *xmlstring = json_object_get_string(doc);
+	xmlDocPtr xmldoc = xmlParseMemory(xmlstring, strlen(xmlstring));
+	json_object * answer = llamapun_get_ngrams (xmldoc);
 	//free(xmlstring);
 	json_object_put(doc);
+	xmlFreeDoc(xmldoc);
 	return answer;
 }
