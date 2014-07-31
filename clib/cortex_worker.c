@@ -43,6 +43,11 @@ int main(int argc, char** argv) {
   ngram_service_registration->name = "ngram_v0_1";
   ngram_service_registration->callback = get_ngrams;
   HASH_ADD_KEYPTR( hh, cortex_services, ngram_service_registration->name, strlen(ngram_service_registration->name), ngram_service_registration);
+  // bag of words collection for paragraph discrimination:
+  struct service_registration* bag_of_words_service_registration = (struct service_registration*)malloc(sizeof(struct service_registration));
+  bag_of_words_service_registration->name = "bag_of_words_v0_1";
+  bag_of_words_service_registration->callback = get_bags_of_words;
+  HASH_ADD_KEYPTR( hh, cortex_services, bag_of_words_service_registration->name, strlen(bag_of_words_service_registration->name), bag_of_words_service_registration);
 
   // Obtain the callback for the currently requested service:
   struct service_registration* service_description;
@@ -79,11 +84,9 @@ void cortex_loop(char* gearman_uri, int gearman_port, int timeout, char* service
 
   gearman_worker_add_function(&worker, service_name, timeout, cortex_process_document, callback);
   while(1) {
-    printf("Run job\n");
     gearman_worker_work(&worker);
   }
-    printf("free it\n");
-    gearman_worker_free(&worker);
+  gearman_worker_free(&worker);
   return; }
 
 void *cortex_process_document(gearman_job_st *job, void *context, size_t *size, gearman_return_t *ret) {
@@ -94,10 +97,10 @@ void *cortex_process_document(gearman_job_st *job, void *context, size_t *size, 
   char* workload = (char *)gearman_job_take_workload(job,&workload_size);
   workload = (char *)realloc(workload, workload_size+1);
   workload[workload_size] = '\0';
-  printf("WORKLOAD: %.100s\n", workload);
   json_object * json_workload = json_tokener_parse(workload);
   // Invoke callback on the workload and get the response:
   json_object* json_response = callback(json_workload);
   // Return to Gearman:
+  free(workload);
   *ret=GEARMAN_SUCCESS;
   return cortex_stringify_response(json_response,size); }
